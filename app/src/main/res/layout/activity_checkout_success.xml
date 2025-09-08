@@ -7,7 +7,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#FFF5F5F5"
-    android:padding="16dp">
+    android:paddingTop="16dp"
+    android:paddingBottom="32dp"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
 
     <!-- Header -->
     <RelativeLayout
