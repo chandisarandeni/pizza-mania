@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+
+    android:id="@+id/main"
+    android:layout_height="match_parent"
+    android:background="#FFF5F5F5"
+    android:padding="24dp">
+
+
+    <!-- Main Content Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Not Connected"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#FF2D2D2D"
+            android:layout_marginBottom="16dp"
+            android:gravity="center" />
+
+        <!-- Description Text -->
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You are not connected to the\ninternet, please check your\nconnection and try again."
+            android:textSize="16sp"
+            android:textColor="#FF666666"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginBottom="48dp" />
+
+        <!-- Illustration Image -->
+        <ImageView
+            android:id="@+id/iv_no_connection_illustration"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_marginBottom="48dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/connection_img"
+            android:contentDescription="No internet connection illustration" />
+
+    </LinearLayout>
+
+    <!-- Try Again Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_try_again"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="32dp"
+        android:text="Try Again"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/button_black"
+        android:elevation="4dp"
+        android:layout_marginHorizontal="16dp" />
+
+</RelativeLayout>
