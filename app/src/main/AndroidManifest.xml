@@ -13,13 +13,18 @@
         android:theme="@style/Theme.Pizzamania"
         tools:targetApi="31">
         <activity
+            android:name=".PizzaDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PizzaListActivity"
+            android:exported="false" />
+        <activity
             android:name=".SignupActivity"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true"

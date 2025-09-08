@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF5F5F5"
+    android:fillViewport="true"
+    tools:context=".PizzaDetailsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Header with Pizza Image -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:background="#FFF5F5F5">
+
+            <!-- Back Arrow -->
+            <ImageView
+                android:id="@+id/iv_back_arrow"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="16dp"
+                android:src="@drawable/caret_left"
+                android:contentDescription="Back button" />
+
+            <!-- Favorite Heart Icon -->
+            <ImageView
+                android:id="@+id/iv_favorite"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="16dp"
+                android:src="@drawable/heart_img"
+                android:contentDescription="Add to favorites" />
+
+            <!-- Pizza Image -->
+            <ImageView
+                android:id="@+id/iv_pizza_image"
+                android:layout_width="280dp"
+                android:layout_height="280dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/pizza_placeholder"
+                android:scaleType="centerCrop"
+                android:contentDescription="Pizza Image" />
+
+        </RelativeLayout>
+
+        <!-- Content Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="#FFFFFF">
+
+            <!-- Pizza Title -->
+            <TextView
+                android:id="@+id/tv_pizza_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Classico Mixed\nPizza"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#FF2D2D2D"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Pizza Description -->
+            <TextView
+                android:id="@+id/tv_pizza_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="A delicious blend of classic toppings on a perfectly baked crust, bringing together the best of traditional pizza flavors."
+                android:textSize="14sp"
+                android:textColor="#FF666666"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Star Rating -->
+            <ImageView
+                android:id="@+id/iv_star_rating"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_star_filled"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="5 star rating" />
+
+            <!-- Size Options Section -->
+            <TextView
+                android:id="@+id/tv_size_options_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Size Options"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#FF2D2D2D"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Size Options Buttons -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_size_small"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="S"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/size_button_selected"
+                    android:layout_marginEnd="12dp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_size_medium"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="M"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF666666"
+                    android:background="@drawable/size_button_unselected"
+                    android:layout_marginEnd="12dp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_size_large"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="L"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF666666"
+                    android:background="@drawable/size_button_unselected" />
+
+            </LinearLayout>
+
+            <!-- Quantity Section -->
+            <TextView
+                android:id="@+id/tv_quantity_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantity"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#FF2D2D2D"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Quantity Controls -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="32dp">
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_decrease_quantity"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_minus"
+                    android:background="@drawable/quantity_button_background"
+                    android:contentDescription="Decrease quantity" />
+
+                <TextView
+                    android:id="@+id/tv_quantity"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF2D2D2D"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="16dp" />
+
+                <ImageButton
+                    android:id="@+id/btn_increase_quantity"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_plus"
+                    android:background="@drawable/quantity_button_background"
+                    android:contentDescription="Increase quantity" />
+
+            </LinearLayout>
+
+            <!-- Bottom Section with Price and Add to Cart -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <!-- Price Section -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Price"
+                        android:textSize="14sp"
+                        android:textColor="#FF666666" />
+
+                    <TextView
+                        android:id="@+id/tv_total_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$7.99"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF2D2D2D" />
+
+                </LinearLayout>
+
+                <!-- Shopping Bag Icon -->
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_shopping_bag"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/shoppingbag_img"
+                    android:background="@drawable/shopping_bag_background"
+                    android:padding="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:contentDescription="Shopping bag" />
+
+                <!-- Add to Cart Button -->
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_add_to_cart"
+                    android:layout_width="wrap_content"
+                    android:layout_height="56dp"
+                    android:text="Add to cart"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/add_to_cart_button_background"
+                    android:paddingHorizontal="24dp"
+                    android:drawableStart="@drawable/ic_cart_white"
+                    android:drawablePadding="8dp"
+                    android:elevation="2dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
