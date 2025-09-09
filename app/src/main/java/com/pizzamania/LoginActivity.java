@@ -43,5 +43,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Signup page navigation
+        findViewById(R.id.btn_signup).setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+        });
     }
 }
