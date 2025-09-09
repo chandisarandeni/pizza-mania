@@ -1,5 +1,6 @@
 package com.pizzamania;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -19,6 +20,11 @@ public class SignupActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        // login page navigation
+        findViewById(R.id.tv_login_link).setOnClickListener(v -> {
+            startActivity(new Intent(SignupActivity.this, LoginActivity.class));
         });
     }
 }
