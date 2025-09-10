@@ -184,7 +184,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <ImageButton
+                <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_increase_quantity"
                     android:layout_width="40dp"
                     android:layout_height="40dp"

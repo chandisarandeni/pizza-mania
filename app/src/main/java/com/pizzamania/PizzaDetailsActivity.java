@@ -6,11 +6,16 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class PizzaDetailsActivity extends AppCompatActivity {
+
+    private TextView quantityText;
+    private AppCompatImageButton btnIncrease, btnDecrease;
+    private int quantity = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,5 +59,27 @@ public class PizzaDetailsActivity extends AppCompatActivity {
 
         // You can use the price for additional functionality later
         // For example, updating a price TextView if you add one to the layout
+
+        quantityText = findViewById(R.id.tv_quantity);
+        btnIncrease = findViewById(R.id.btn_increase_quantity);
+        btnDecrease = findViewById(R.id.btn_decrease_quantity);
+
+        quantityText.setText(String.valueOf(quantity));
+
+        setupQuantityControls();
+    }
+
+    private void setupQuantityControls() {
+        btnDecrease.setOnClickListener(v -> {
+            if (quantity > 1) {
+                quantity--;
+                quantityText.setText(String.valueOf(quantity));
+            }
+        });
+
+        btnIncrease.setOnClickListener(v -> {
+            quantity++;
+            quantityText.setText(String.valueOf(quantity));
+        });
     }
 }
