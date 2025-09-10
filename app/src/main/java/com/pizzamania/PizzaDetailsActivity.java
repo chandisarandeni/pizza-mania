@@ -81,15 +81,18 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         quantityText.setText(String.valueOf(quantity));
         updateTotalPrice();
 
-        quantityText.setText(String.valueOf(quantity));
-
         setupQuantityControls();
         setupSizeControls();
+
+        // Initialize with Small size selected by default
+        updateSizeButtonStates();
     }
 
     private void updateTotalPrice() {
         double totalPrice = currentBasePrice * quantity;
-        totalPriceText.setText(String.format("$%.2f", totalPrice));
+        if (totalPriceText != null) {
+            totalPriceText.setText(String.format("$%.2f", totalPrice));
+        }
     }
 
     private void setupQuantityControls() {
@@ -97,12 +100,14 @@ public class PizzaDetailsActivity extends AppCompatActivity {
             if (quantity > 1) {
                 quantity--;
                 quantityText.setText(String.valueOf(quantity));
+                updateTotalPrice(); // Update price when quantity changes
             }
         });
 
         btnIncrease.setOnClickListener(v -> {
             quantity++;
             quantityText.setText(String.valueOf(quantity));
+            updateTotalPrice(); // Update price when quantity changes
         });
     }
 
@@ -155,7 +160,6 @@ public class PizzaDetailsActivity extends AppCompatActivity {
                 btnSizeLarge.setTextColor(getResources().getColor(android.R.color.white));
                 break;
         }
-
 
     }
 }
