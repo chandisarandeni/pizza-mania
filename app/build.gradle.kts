@@ -32,7 +32,9 @@ android {
 }
 
 dependencies {
-
+    // Correct OkHttp dependency
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -41,5 +43,4 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("androidx.drawerlayout:drawerlayout:1.2.0")
-
 }
