@@ -2,6 +2,8 @@ package com.pizzamania;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,27 +21,57 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+
+        // Adjust for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-
         EditText etEmail = findViewById(R.id.et_email);
         EditText etPassword = findViewById(R.id.et_password);
         Button btnLogin = findViewById(R.id.btn_login);
 
-        btnLogin.setOnClickListener(v -> {;
+        // TextWatcher to allow lowercase letters, numbers, @ and .
+        etEmail.addTextChangedListener(new TextWatcher() {
+            boolean isUpdating = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isUpdating) return;
+
+                isUpdating = true;
+                // Keep lowercase letters, numbers, @ and .
+                String filtered = s.toString().toLowerCase().replaceAll("[^a-z0-9@.]", "");
+                if (!s.toString().equals(filtered)) {
+                    etEmail.setText(filtered);
+                    etEmail.setSelection(filtered.length());
+                }
+                isUpdating = false;
+            }
+        });
+
+        // Login button click
+        btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            if (email.equals("admin") && password.equals("password")) {
-                // Navigate to PizzaListActivity
-                startActivity(new Intent(LoginActivity.this, PizzaListActivity.class));
-                finish(); // Optional: Close the LoginActivity so user can't go back to it
-            } else {
+            if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Enter username and password", Toast.LENGTH_SHORT).show();
+            } else if (email.equals("admin") && password.equals("password")) {
+                startActivity(new Intent(LoginActivity.this, PizzaListActivity.class));
+                finish();
+            } else {
+                Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
             }
         });
 
