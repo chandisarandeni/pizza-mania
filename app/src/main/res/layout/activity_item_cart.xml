@@ -92,7 +92,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_revert"
+                android:src="@drawable/ic_minus"
                 android:tint="#666666"
                 android:contentDescription="Decrease quantity" />
 
@@ -115,7 +115,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_add"
+                android:src="@drawable/ic_plus"
                 android:tint="#666666"
                 android:contentDescription="Increase quantity" />
 

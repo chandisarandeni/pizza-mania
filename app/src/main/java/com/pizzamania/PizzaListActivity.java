@@ -1,5 +1,6 @@
 package com.pizzamania;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
@@ -48,7 +49,13 @@ public class PizzaListActivity extends AppCompatActivity {
         list.add(new Pizza(1, "Margherita", "Tomato, mozzarella", 8.50, R.drawable.pizza_placeholder));
         list.add(new Pizza(2, "Pepperoni", "Pepperoni, cheese", 9.50, R.drawable.pizza_placeholder));
         PizzaAdapter adapter = new PizzaAdapter(this, list, pizza -> {
-            // handle click
+            // Navigate to PizzaDetailsActivity with pizza data
+            Intent intent = new Intent(this, PizzaDetailsActivity.class);
+            intent.putExtra("pizza_name", pizza.getName());
+            intent.putExtra("pizza_description", pizza.getDescription());
+            intent.putExtra("pizza_price", pizza.getPrice());
+            intent.putExtra("pizza_image", pizza.getImageResId());
+            startActivity(intent);
         });
         rv.setAdapter(adapter);
 
