@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:gravity="end">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_details"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
@@ -64,7 +64,7 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:background="@drawable/details_button_background"
+            android:background="@drawable/button_yellow"
             android:paddingHorizontal="16dp"
             android:minWidth="0dp"
             android:minHeight="0dp" />
