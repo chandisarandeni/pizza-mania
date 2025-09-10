@@ -1,6 +1,7 @@
 package com.pizzamania;
 
 import android.os.Bundle;
+import android.content.Intent;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +27,11 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
                 originalPadding + systemBars.bottom
             );
             return insets;
+        });
+
+        // login page navigation
+        findViewById(R.id.iv_back_arrow).setOnClickListener(v -> {
+            startActivity(new Intent(ForgotPasswordOtpActivity.this, LoginActivity.class));
         });
     }
 }
