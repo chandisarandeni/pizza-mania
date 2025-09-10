@@ -21,17 +21,22 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
             // Preserve the original XML padding (24dp) and add system bar insets
             int originalPadding = (int) (24 * getResources().getDisplayMetrics().density); // Convert 24dp to pixels
             v.setPadding(
-                originalPadding + systemBars.left,
-                originalPadding + systemBars.top,
-                originalPadding + systemBars.right,
-                originalPadding + systemBars.bottom
+                    originalPadding + systemBars.left,
+                    originalPadding + systemBars.top,
+                    originalPadding + systemBars.right,
+                    originalPadding + systemBars.bottom
             );
             return insets;
         });
 
-        // login page navigation
+        // back to login page navigation
         findViewById(R.id.iv_back_arrow).setOnClickListener(v -> {
-            startActivity(new Intent(ForgotPasswordOtpActivity.this, LoginActivity.class));
+            onBackPressed();
+        });
+
+        // back to login page using back button
+        findViewById(R.id.btn_back).setOnClickListener(v -> {
+            onBackPressed();
         });
     }
 }

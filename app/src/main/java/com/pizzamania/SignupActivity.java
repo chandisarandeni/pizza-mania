@@ -26,5 +26,10 @@ public class SignupActivity extends AppCompatActivity {
         findViewById(R.id.tv_login_link).setOnClickListener(v -> {
             startActivity(new Intent(SignupActivity.this, LoginActivity.class));
         });
+
+        // navigate back
+        findViewById(R.id.btn_back).setOnClickListener(v -> {
+            onBackPressed();
+        });
     }
 }
