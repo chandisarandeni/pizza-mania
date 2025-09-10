@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -16,6 +17,15 @@ public class PizzaDetailsActivity extends AppCompatActivity {
     private TextView quantityText;
     private AppCompatImageButton btnIncrease, btnDecrease;
     private int quantity = 1;
+
+    private TextView totalPriceText;
+    private AppCompatButton btnSizeSmall, btnSizeMedium, btnSizeLarge;
+
+    private double basePriceSmall = 7.99;
+    private double basePriceMedium = 9.99;
+    private double basePriceLarge = 12.99;
+    private double currentBasePrice = 7.99; // Default to small
+    private String selectedSize = "S";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +73,23 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         quantityText = findViewById(R.id.tv_quantity);
         btnIncrease = findViewById(R.id.btn_increase_quantity);
         btnDecrease = findViewById(R.id.btn_decrease_quantity);
+        totalPriceText = findViewById(R.id.tv_total_price);
+        btnSizeSmall = findViewById(R.id.btn_size_small);
+        btnSizeMedium = findViewById(R.id.btn_size_medium);
+        btnSizeLarge = findViewById(R.id.btn_size_large);
+
+        quantityText.setText(String.valueOf(quantity));
+        updateTotalPrice();
 
         quantityText.setText(String.valueOf(quantity));
 
         setupQuantityControls();
+        setupSizeControls();
+    }
+
+    private void updateTotalPrice() {
+        double totalPrice = currentBasePrice * quantity;
+        totalPriceText.setText(String.format("$%.2f", totalPrice));
     }
 
     private void setupQuantityControls() {
@@ -81,5 +104,58 @@ public class PizzaDetailsActivity extends AppCompatActivity {
             quantity++;
             quantityText.setText(String.valueOf(quantity));
         });
+    }
+
+
+    private void setupSizeControls() {
+        btnSizeSmall.setOnClickListener(v -> {
+            selectSize("S", basePriceSmall);
+            updateSizeButtonStates();
+        });
+
+        btnSizeMedium.setOnClickListener(v -> {
+            selectSize("M", basePriceMedium);
+            updateSizeButtonStates();
+        });
+
+        btnSizeLarge.setOnClickListener(v -> {
+            selectSize("L", basePriceLarge);
+            updateSizeButtonStates();
+        });
+    }
+
+    private void selectSize(String size, double price) {
+        selectedSize = size;
+        currentBasePrice = price;
+        updateTotalPrice();
+    }
+
+    private void updateSizeButtonStates() {
+        // Reset all buttons to unselected state
+        btnSizeSmall.setBackgroundResource(R.drawable.size_button_unselected);
+        btnSizeMedium.setBackgroundResource(R.drawable.size_button_unselected);
+        btnSizeLarge.setBackgroundResource(R.drawable.size_button_unselected);
+
+        btnSizeSmall.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        btnSizeMedium.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        btnSizeLarge.setTextColor(getResources().getColor(android.R.color.darker_gray));
+
+        // Set selected button to selected state
+        switch (selectedSize) {
+            case "S":
+                btnSizeSmall.setBackgroundResource(R.drawable.size_button_selected);
+                btnSizeSmall.setTextColor(getResources().getColor(android.R.color.white));
+                break;
+            case "M":
+                btnSizeMedium.setBackgroundResource(R.drawable.size_button_selected);
+                btnSizeMedium.setTextColor(getResources().getColor(android.R.color.white));
+                break;
+            case "L":
+                btnSizeLarge.setBackgroundResource(R.drawable.size_button_selected);
+                btnSizeLarge.setTextColor(getResources().getColor(android.R.color.white));
+                break;
+        }
+
+
     }
 }
