@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/order_card_background"
+    android:padding="16dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="12dp"
+    android:elevation="2dp">
+
+    <!-- Date and Time -->
+    <TextView
+        android:id="@+id/tv_order_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="08.09.2020 9:59 PM"
+        android:textSize="14sp"
+        android:textColor="#FF2D2D2D"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <!-- Order Description and Price Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+
+        <!-- Order Description -->
+        <TextView
+            android:id="@+id/tv_order_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Chicago custom pizza"
+            android:textSize="12sp"
+            android:textColor="#FF666666" />
+
+        <!-- Order Price -->
+        <TextView
+            android:id="@+id/tv_order_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$32.22"
+            android:textSize="16sp"
+            android:textColor="#FF2D2D2D"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Details Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btn_details"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Details"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/details_button_background"
+            android:paddingHorizontal="16dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
