@@ -1,74 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/order_card_background"
-    android:padding="16dp"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginBottom="12dp"
-    android:elevation="2dp">
+    android:background="#FFF5F5F5"
+    tools:context=".OrderHistoryActivity">
 
-    <!-- Date and Time -->
-    <TextView
-        android:id="@+id/tv_order_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="08.09.2020 9:59 PM"
-        android:textSize="14sp"
-        android:textColor="#FF2D2D2D"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
-
-    <!-- Order Description and Price Row -->
+    <!-- Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="12dp">
+        android:orientation="vertical"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:paddingBottom="24dp">
 
-        <!-- Order Description -->
-        <TextView
-            android:id="@+id/tv_order_description"
-            android:layout_width="0dp"
+        <!-- Top Bar -->
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Chicago custom pizza"
-            android:textSize="12sp"
-            android:textColor="#FF666666" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp">
 
-        <!-- Order Price -->
+            <!-- Back Arrow -->
+            <ImageView
+                android:id="@+id/iv_back_arrow"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_back_arrow"
+                android:contentDescription="Back button" />
+
+            <!-- Profile Image -->
+            <ImageView
+                android:id="@+id/iv_profile"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/profile_image"
+                android:background="@drawable/circle_background"
+                android:contentDescription="Profile image" />
+
+        </RelativeLayout>
+
+        <!-- Title -->
         <TextView
-            android:id="@+id/tv_order_price"
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="$32.22"
-            android:textSize="16sp"
-            android:textColor="#FF2D2D2D"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <!-- Details Button -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="end">
-
-        <Button
-            android:id="@+id/btn_details"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:text="Details"
-            android:textSize="12sp"
+            android:text="Your Order History"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/details_button_background"
-            android:paddingHorizontal="16dp"
-            android:minWidth="0dp"
-            android:minHeight="0dp" />
+            android:textColor="#FF2D2D2D"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Here you can see rides that you have completed."
+            android:textSize="14sp"
+            android:textColor="#FF666666"
+            android:lineSpacingExtra="2dp" />
 
     </LinearLayout>
+
+    <!-- Order History List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_order_history"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false" />
+
+    <!-- Empty State (Optional - Show when no orders) -->
+    <LinearLayout
+        android:id="@+id/ll_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/empty_orders_illustration"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="No orders illustration" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Orders Yet"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FF2D2D2D"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You haven't placed any orders yet.\nStart exploring our delicious pizzas!"
+            android:textSize="14sp"
+            android:textColor="#FF666666"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
