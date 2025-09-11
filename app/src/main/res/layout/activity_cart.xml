@@ -23,7 +23,7 @@
             android:layout_height="24dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/caret_left"
             app:tint="#333333"
             android:contentDescription="Back button" />
 

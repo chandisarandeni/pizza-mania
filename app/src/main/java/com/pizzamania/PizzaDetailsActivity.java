@@ -3,6 +3,7 @@ package com.pizzamania;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.pizzamania.db.CartDbHelper;
+import com.pizzamania.model.CartItem;
+
 public class PizzaDetailsActivity extends AppCompatActivity {
 
     private TextView quantityText;
@@ -20,12 +24,17 @@ public class PizzaDetailsActivity extends AppCompatActivity {
 
     private TextView totalPriceText;
     private AppCompatButton btnSizeSmall, btnSizeMedium, btnSizeLarge;
+    private AppCompatButton btnAddToCart;
 
     private double basePriceSmall = 7.99;
     private double basePriceMedium = 9.99;
     private double basePriceLarge = 12.99;
     private double currentBasePrice = 7.99; // Default to small
-    private String selectedSize = "S";
+    private String selectedSize = "Small";
+
+    private CartDbHelper cartDbHelper;
+    private String pizzaName;
+    private int pizzaImageId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +58,10 @@ public class PizzaDetailsActivity extends AppCompatActivity {
 
     private void setupPizzaDetails() {
         // Get pizza data passed from previous activity
-        String pizzaName = getIntent().getStringExtra("pizza_name");
+        pizzaName = getIntent().getStringExtra("pizza_name");
         String pizzaDescription = getIntent().getStringExtra("pizza_description");
         double pizzaPrice = getIntent().getDoubleExtra("pizza_price", 0.0);
-        int pizzaImageId = getIntent().getIntExtra("pizza_image", R.drawable.pizza_placeholder);
+        pizzaImageId = getIntent().getIntExtra("pizza_image", R.drawable.pizza_placeholder);
 
         // Update UI with pizza data
         TextView titleView = findViewById(R.id.tv_pizza_title);
@@ -67,8 +76,8 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         }
         imageView.setImageResource(pizzaImageId);
 
-        // You can use the price for additional functionality later
-        // For example, updating a price TextView if you add one to the layout
+        // Initialize cart helper
+        cartDbHelper = new CartDbHelper(this);
 
         quantityText = findViewById(R.id.tv_quantity);
         btnIncrease = findViewById(R.id.btn_increase_quantity);
@@ -77,12 +86,14 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         btnSizeSmall = findViewById(R.id.btn_size_small);
         btnSizeMedium = findViewById(R.id.btn_size_medium);
         btnSizeLarge = findViewById(R.id.btn_size_large);
+        btnAddToCart = findViewById(R.id.btn_add_to_cart);
 
         quantityText.setText(String.valueOf(quantity));
         updateTotalPrice();
 
         setupQuantityControls();
         setupSizeControls();
+        setupAddToCartButton();
 
         // Initialize with Small size selected by default
         updateSizeButtonStates();
@@ -130,7 +141,7 @@ public class PizzaDetailsActivity extends AppCompatActivity {
     }
 
     private void selectSize(String size, double price) {
-        selectedSize = size;
+        selectedSize = size.equals("S") ? "Small" : size.equals("M") ? "Medium" : "Large";
         currentBasePrice = price;
         updateTotalPrice();
     }
@@ -161,5 +172,38 @@ public class PizzaDetailsActivity extends AppCompatActivity {
                 break;
         }
 
+    }
+
+    private void setupAddToCartButton() {
+        btnAddToCart.setOnClickListener(v -> {
+            addToCart();
+        });
+    }
+
+    private void addToCart() {
+        if (pizzaName == null || pizzaName.isEmpty()) {
+            Toast.makeText(this, "Error: Pizza name not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        CartItem cartItem = new CartItem(
+            pizzaName,
+            selectedSize,
+            quantity,
+            currentBasePrice,
+            pizzaImageId
+        );
+
+        long result = cartDbHelper.addCartItem(cartItem);
+
+        if (result != -1) {
+            Toast.makeText(this, "Added to cart successfully!", Toast.LENGTH_SHORT).show();
+            // Reset quantity to 1 after adding to cart
+            quantity = 1;
+            quantityText.setText(String.valueOf(quantity));
+            updateTotalPrice();
+        } else {
+            Toast.makeText(this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -7,14 +7,12 @@ import android.widget.ImageView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -27,14 +25,14 @@ import java.util.List;
 public class PizzaListActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pizza_list);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_content), (v, insets) -> {
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
@@ -61,7 +59,7 @@ public class PizzaListActivity extends AppCompatActivity {
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -74,5 +72,12 @@ public class PizzaListActivity extends AppCompatActivity {
         // Set up menu icon click to open drawer
         ImageView menuIcon = findViewById(R.id.iv_menu);
         menuIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+
+        // Set up cart icon click to open CartActivity
+        ImageView cartIcon = findViewById(R.id.iv_cart);
+        cartIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CartActivity.class);
+            startActivity(intent);
+        });
     }
 }
