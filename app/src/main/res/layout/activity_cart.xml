@@ -102,13 +102,13 @@
                 android:textAlignment="center"
                 android:layout_marginBottom="24dp" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_browse_pizzas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Browse Pizzas"
                 android:textColor="@android:color/white"
-                android:background="#FF6B35"
+                android:background="@drawable/button_yellow"
                 android:paddingLeft="24dp"
                 android:paddingRight="24dp"
                 android:paddingTop="12dp"
