@@ -14,11 +14,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class ForgotPasswordOtpActivity extends AppCompatActivity {
 
     private LinearLayout layoutEmail, layoutOtp, layoutNewPassword;
     private ScrollView scrollView;
     private EditText etEmail, etOtp1, etOtp2, etOtp3, etOtp4, etNewPassword, etConfirmPassword;
+
+    private OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +74,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
         findViewById(R.id.btn_reset_password).setOnClickListener(v -> resetPassword());
     }
 
+    // -------------------- Step 1: Send OTP --------------------
     private void sendOtp() {
         String email = etEmail.getText().toString().trim();
         if (TextUtils.isEmpty(email)) {
@@ -72,16 +82,33 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Call your API to send OTP here
+        String url = "http://10.0.2.2:8080/api/v1/customers/send-otp?email=" + email;
 
-        Toast.makeText(this, "OTP sent to " + email, Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(RequestBody.create(new byte[0]))
+                    .build();
 
-        // Show OTP layout
-        layoutEmail.setVisibility(View.GONE);
-        layoutOtp.setVisibility(View.VISIBLE);
-        scrollView.post(() -> scrollView.scrollTo(0, layoutOtp.getTop()));
+            try (Response response = client.newCall(request).execute()) {
+                final String resp = response.body() != null ? response.body().string() : "No response";
+                runOnUiThread(() -> {
+                    Toast.makeText(ForgotPasswordOtpActivity.this, resp, Toast.LENGTH_SHORT).show();
+
+                    // Show OTP layout
+                    layoutEmail.setVisibility(View.GONE);
+                    layoutOtp.setVisibility(View.VISIBLE);
+                    scrollView.post(() -> scrollView.scrollTo(0, layoutOtp.getTop()));
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this,
+                        "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }).start();
     }
 
+    // -------------------- Step 2: Verify OTP --------------------
     private void verifyOtp() {
         String otp = etOtp1.getText().toString().trim() +
                 etOtp2.getText().toString().trim() +
@@ -93,16 +120,38 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Call your API to verify OTP here
+        String email = etEmail.getText().toString().trim();
+        String url = "http://10.0.2.2:8080/api/v1/customers/verify-otp?email=" + email + "&otp=" + otp;
 
-        Toast.makeText(this, "OTP verified", Toast.LENGTH_SHORT).show();
+        new Thread(() -> {
+            Request request = new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
 
-        // Show new password layout
-        layoutOtp.setVisibility(View.GONE);
-        layoutNewPassword.setVisibility(View.VISIBLE);
-        scrollView.post(() -> scrollView.scrollTo(0, layoutNewPassword.getTop()));
+            try (Response response = client.newCall(request).execute()) {
+                final String resp = response.body() != null ? response.body().string() : "No response";
+                runOnUiThread(() -> {
+                    if (resp.contains("success")) {
+                        Toast.makeText(ForgotPasswordOtpActivity.this, "OTP verified", Toast.LENGTH_SHORT).show();
+
+                        // Show new password layout
+                        layoutOtp.setVisibility(View.GONE);
+                        layoutNewPassword.setVisibility(View.VISIBLE);
+                        scrollView.post(() -> scrollView.scrollTo(0, layoutNewPassword.getTop()));
+                    } else {
+                        Toast.makeText(ForgotPasswordOtpActivity.this, resp, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this,
+                        "Failed to verify OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }).start();
     }
 
+    // -------------------- Step 3: Reset Password --------------------
     private void resetPassword() {
         String newPassword = etNewPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
@@ -117,11 +166,32 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
             return;
         }
 
-        // TODO: Call your API to reset password here
+        String email = etEmail.getText().toString().trim();
+        String url = "http://10.0.2.2:8080/api/v1/customers/reset-password";
 
-        Toast.makeText(this, "Password reset successfully", Toast.LENGTH_SHORT).show();
+        String jsonBody = "{ \"email\": \"" + email + "\", \"newPassword\": \"" + newPassword + "\" }";
 
-        // Optionally finish activity and go back to login
-        finish();
+        new Thread(() -> {
+            RequestBody body = RequestBody.create(jsonBody.getBytes());
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                final String resp = response.body() != null ? response.body().string() : "No response";
+                runOnUiThread(() -> {
+                    Toast.makeText(ForgotPasswordOtpActivity.this, resp, Toast.LENGTH_SHORT).show();
+                    if (resp.contains("success")) {
+                        finish(); // go back to login
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this,
+                        "Failed to reset password: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }).start();
     }
 }
