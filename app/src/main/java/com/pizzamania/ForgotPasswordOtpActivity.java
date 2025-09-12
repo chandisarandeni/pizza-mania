@@ -167,16 +167,13 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
         }
 
         String email = etEmail.getText().toString().trim();
-        String url = "http://10.0.2.2:8080/api/v1/customers/reset-password";
-
-        String jsonBody = "{ \"email\": \"" + email + "\", \"newPassword\": \"" + newPassword + "\" }";
+        String url = "http://10.0.2.2:8080/api/v1/customers/reset-password" +
+                "?email=" + email + "&newPassword=" + newPassword;
 
         new Thread(() -> {
-            RequestBody body = RequestBody.create(jsonBody.getBytes());
             Request request = new Request.Builder()
                     .url(url)
-                    .post(body)
-                    .addHeader("Content-Type", "application/json")
+                    .post(RequestBody.create(new byte[0])) // empty body
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -194,4 +191,5 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
             }
         }).start();
     }
+
 }
