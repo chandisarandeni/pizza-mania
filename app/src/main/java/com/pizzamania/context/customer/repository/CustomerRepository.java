@@ -8,4 +8,8 @@ public class CustomerRepository {
     public void addCustomer(String jsonBody, NetworkClient.NetworkCallback callback) {
         CustomerApi.addCustomer(jsonBody, callback);
     }
+
+    public void getCustomerByEmail(String email, NetworkClient.NetworkCallback callback) {
+        CustomerApi.getCustomerByEmail(email, callback);
+    }
 }
