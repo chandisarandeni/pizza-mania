@@ -35,7 +35,7 @@ public class CartDbHelper extends SQLiteOpenHelper {
                 COL_SIZE + " TEXT, " +
                 COL_QUANTITY + " INTEGER, " +
                 COL_PRICE + " REAL, " +
-                COL_IMAGE + " INTEGER" +
+                COL_IMAGE + " TEXT" +
                 ")";
         db.execSQL(sql);
     }
@@ -71,7 +71,7 @@ public class CartDbHelper extends SQLiteOpenHelper {
                 item.setSize(c.getString(c.getColumnIndexOrThrow(COL_SIZE)));
                 item.setQuantity(c.getInt(c.getColumnIndexOrThrow(COL_QUANTITY)));
                 item.setPrice(c.getDouble(c.getColumnIndexOrThrow(COL_PRICE)));
-                item.setImageRes(c.getInt(c.getColumnIndexOrThrow(COL_IMAGE)));
+                item.setImageRes(c.getString(c.getColumnIndexOrThrow(COL_IMAGE)));
                 list.add(item);
             }
             c.close();

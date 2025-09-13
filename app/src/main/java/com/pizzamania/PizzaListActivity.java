@@ -3,6 +3,7 @@ package com.pizzamania;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
@@ -46,11 +47,17 @@ public class PizzaListActivity extends AppCompatActivity {
 
         // Initialize views first
         drawerLayout = findViewById(R.id.drawer_layout);
-
         rv = findViewById(R.id.rv_pizzas);
 
-        // Only set window insets if drawer_layout exists
-        if (drawerLayout != null) {
+        // Only set window insets if main view exists, fallback to drawer_layout
+        View mainView = findViewById(R.id.main);
+        if (mainView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        } else if (drawerLayout != null) {
             ViewCompat.setOnApplyWindowInsetsListener(drawerLayout, (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);

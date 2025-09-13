@@ -70,18 +70,13 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
             holder.price.setText(String.format("$%.2f", pizza.getPrice()));
         }
 
-        // Only handle description if the view exists
-        if (holder.description != null && pizza.getDescription() != null && !pizza.getDescription().isEmpty()) {
-            holder.description.setText(pizza.getDescription());
-            holder.description.setVisibility(View.VISIBLE);
-        } else if (holder.description != null) {
-            holder.description.setVisibility(View.GONE);
-        }
-
+        // Load image with Glide
         if (holder.image != null) {
             Glide.with(context)
                     .load(pizza.getImageUrl())
-                    .apply(new RequestOptions().placeholder(R.drawable.pizza_placeholder).error(R.drawable.pizza_placeholder))
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.pizza_placeholder)
+                            .error(R.drawable.pizza_placeholder))
                     .into(holder.image);
         }
 
@@ -104,15 +99,14 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView name;
-        TextView description;
         TextView price;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.iv_pizza);
             name = itemView.findViewById(R.id.tv_pizza_name);
-            description = itemView.findViewById(R.id.tv_pizza_description);
             price = itemView.findViewById(R.id.tv_price);
+            // Removed description since it doesn't exist in layout
         }
     }
 }

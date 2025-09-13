@@ -13,6 +13,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.pizzamania.db.CartDbHelper;
 import com.pizzamania.model.CartItem;
 
@@ -34,7 +36,7 @@ public class PizzaDetailsActivity extends AppCompatActivity {
 
     private CartDbHelper cartDbHelper;
     private String pizzaName;
-    private int pizzaImageId;
+    private String pizzaImageUrl; // Changed from int to String
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         pizzaName = getIntent().getStringExtra("pizza_name");
         String pizzaDescription = getIntent().getStringExtra("pizza_description");
         double pizzaPrice = getIntent().getDoubleExtra("pizza_price", 0.0);
-        pizzaImageId = getIntent().getIntExtra("pizza_image", R.drawable.pizza_placeholder);
+        pizzaImageUrl = getIntent().getStringExtra("pizza_image_url"); // Fixed key name
 
         // Update UI with pizza data
         TextView titleView = findViewById(R.id.tv_pizza_title);
@@ -74,7 +76,16 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         if (pizzaDescription != null) {
             descriptionView.setText(pizzaDescription);
         }
-        imageView.setImageResource(pizzaImageId);
+
+        // Use Glide to load image from URL
+        if (pizzaImageUrl != null && imageView != null) {
+            Glide.with(this)
+                    .load(pizzaImageUrl)
+                    .apply(new RequestOptions()
+                            .placeholder(R.drawable.pizza_placeholder)
+                            .error(R.drawable.pizza_placeholder))
+                    .into(imageView);
+        }
 
         // Initialize cart helper
         cartDbHelper = new CartDbHelper(this);
@@ -191,19 +202,16 @@ public class PizzaDetailsActivity extends AppCompatActivity {
             selectedSize,
             quantity,
             currentBasePrice,
-            pizzaImageId
+            pizzaImageUrl // Fixed variable name
         );
 
         long result = cartDbHelper.addCartItem(cartItem);
 
         if (result != -1) {
             Toast.makeText(this, "Added to cart successfully!", Toast.LENGTH_SHORT).show();
-            // Reset quantity to 1 after adding to cart
-            quantity = 1;
-            quantityText.setText(String.valueOf(quantity));
-            updateTotalPrice();
         } else {
             Toast.makeText(this, "Failed to add to cart", Toast.LENGTH_SHORT).show();
         }
     }
 }
+

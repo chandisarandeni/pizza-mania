@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.pizzamania.R;
 import com.pizzamania.model.CartItem;
 
@@ -47,7 +48,16 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.VH> {
         holder.size.setText(String.format("Size: %s", item.getSize()));
         holder.quantity.setText(String.format("Qty: %d", item.getQuantity()));
         holder.price.setText(String.format(Locale.getDefault(), "$%.2f", item.getPrice() * item.getQuantity()));
-        holder.image.setImageResource(item.getImageRes());
+        String imageUrl = item.getImageRes();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(holder.image.getContext())
+                    .load(imageUrl)
+                    .placeholder(R.drawable.pizza_placeholder)
+                    .error(R.drawable.pizza_placeholder)
+                    .into(holder.image);
+        } else {
+            holder.image.setImageResource(R.drawable.pizza_placeholder);
+        }
         holder.quantityDisplay.setText(String.valueOf(item.getQuantity()));
 
         // Set click listeners
