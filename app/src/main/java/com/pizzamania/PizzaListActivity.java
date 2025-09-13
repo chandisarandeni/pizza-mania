@@ -85,6 +85,15 @@ public class PizzaListActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Help and support click listener
+        navigationView.getMenu().findItem(R.id.nav_help_support).setOnMenuItemClickListener(item -> {
+            // Navigate to HelpAndSupportActivity
+            Intent intent = new Intent(this, HelpAndSupportActivity.class);
+            startActivity(intent);
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+
         // set logout click listener
         navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(item -> {
             // Handle logout action

@@ -126,10 +126,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Add marker drag listener
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
-            public void onMarkerDragStart(Marker marker) {}
+            public void onMarkerDragStart(Marker marker) {
+            }
 
             @Override
-            public void onMarkerDrag(Marker marker) {}
+            public void onMarkerDrag(Marker marker) {
+            }
 
             @Override
             public void onMarkerDragEnd(Marker marker) {
