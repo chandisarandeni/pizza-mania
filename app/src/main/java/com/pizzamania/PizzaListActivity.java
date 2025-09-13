@@ -19,16 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.pizzamania.adapter.PizzaAdapter;
-import com.pizzamania.api.ApiServices;
-import com.pizzamania.api.RetrofitClient;
-import com.pizzamania.model.Pizza;
+import com.pizzamania.context.product.model.Product;
+import com.pizzamania.context.product.repository.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class PizzaListActivity extends AppCompatActivity {
 
@@ -36,7 +31,7 @@ public class PizzaListActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private RecyclerView rv;
     private PizzaAdapter adapter;
-
+    private ProductRepository productRepository;
     private NavigationView navigationView;
 
     @Override
@@ -44,6 +39,9 @@ public class PizzaListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pizza_list);
+
+        // Initialize repository
+        productRepository = new ProductRepository();
 
         // Initialize views first
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -100,48 +98,26 @@ public class PizzaListActivity extends AppCompatActivity {
             });
         }
 
-        // Fetch pizzas from API
-        fetchPizzas();
+        // Set up navigation menu items
+        setupNavigationMenu();
+
+        // Fetch products from API using OkHttp
+        fetchProducts();
     }
 
-    private void fetchPizzas() {
-        ApiServices api = RetrofitClient.getInstance().create(ApiServices.class);
-        Call<List<Pizza>> call = api.getPizzas();
-        call.enqueue(new Callback<List<Pizza>>() {
-            @Override
-            public void onResponse(Call<List<Pizza>> call, Response<List<Pizza>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Pizza> pizzas = response.body();
-                    if (adapter != null) {
-                        adapter.updateItems(pizzas);
-                    }
-                } else {
-                    Log.e(TAG, "API response empty or failed: " + response.code());
-                    // For testing, load sample data if API fails
-                    loadSamplePizzas();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Pizza>> call, Throwable t) {
-                Log.e(TAG, "API call failed", t);
-                // For testing, load sample data if API fails
-                loadSamplePizzas();
-            }
-        });
+    private void setupNavigationMenu() {
+        if (navigationView == null) return;
 
         // Help and support click listener
         navigationView.getMenu().findItem(R.id.nav_help_support).setOnMenuItemClickListener(item -> {
-            // Navigate to HelpAndSupportActivity
             Intent intent = new Intent(this, HelpAndSupportActivity.class);
             startActivity(intent);
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
 
-        // set logout click listener
+        // Logout click listener
         navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(item -> {
-            // Handle logout action
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -150,19 +126,83 @@ public class PizzaListActivity extends AppCompatActivity {
         });
     }
 
-    private void loadSamplePizzas() {
-        // Load sample pizzas for testing
-        List<Pizza> samplePizzas = new ArrayList<>();
-        samplePizzas.add(new Pizza("Margherita", "Classic pizza with tomato and mozzarella", 12.99, "", true, true, true));
-        samplePizzas.add(new Pizza("Pepperoni", "Pepperoni with mozzarella cheese", 14.99, "", true, true, true));
-        samplePizzas.add(new Pizza("Hawaiian", "Ham and pineapple with cheese", 15.99, "", true, true, false));
-        samplePizzas.add(new Pizza("Meat Lovers", "Pepperoni, sausage, and ham", 17.99, "", true, true, true));
-        samplePizzas.add(new Pizza("Veggie Supreme", "Fresh vegetables and cheese", 16.99, "", true, false, true));
-        samplePizzas.add(new Pizza("BBQ Chicken", "BBQ sauce with grilled chicken", 16.99, "", true, true, true));
+    private void fetchProducts() {
+        Log.d(TAG, "Fetching products using OkHttp...");
 
+        productRepository.getProducts(new ProductRepository.ProductsCallback() {
+            @Override
+            public void onSuccess(List<Product> products) {
+                Log.d(TAG, "Successfully fetched " + products.size() + " products");
+                if (adapter != null) {
+                    adapter.updateItems(products);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "Failed to fetch products: " + error);
+                // Load sample data as fallback
+                loadSampleProducts();
+            }
+        });
+    }
+
+    private void loadSampleProducts() {
+        Log.d(TAG, "Loading sample products as fallback");
+        List<Product> sampleProducts = createSampleProducts();
         if (adapter != null) {
-            adapter.updateItems(samplePizzas);
+            adapter.updateItems(sampleProducts);
         }
     }
 
+    private List<Product> createSampleProducts() {
+        List<Product> products = new ArrayList<>();
+
+        Product margherita = new Product();
+        margherita.setProductId("1");
+        margherita.setName("Margherita");
+        margherita.setDescription("Classic pizza with tomato sauce, mozzarella, and fresh basil");
+        margherita.setPrice(12.99);
+        margherita.setImageUrl("https://example.com/margherita.jpg");
+        margherita.setAvailable(true);
+        margherita.setAvailableInColombo(true);
+        margherita.setAvailableInGalle(true);
+
+        Product pepperoni = new Product();
+        pepperoni.setProductId("2");
+        pepperoni.setName("Pepperoni");
+        pepperoni.setDescription("Delicious pizza with pepperoni and melted cheese");
+        pepperoni.setPrice(15.99);
+        pepperoni.setImageUrl("https://example.com/pepperoni.jpg");
+        pepperoni.setAvailable(true);
+        pepperoni.setAvailableInColombo(true);
+        pepperoni.setAvailableInGalle(false);
+
+        Product veggie = new Product();
+        veggie.setProductId("3");
+        veggie.setName("Veggie Supreme");
+        veggie.setDescription("Loaded with fresh vegetables and cheese");
+        veggie.setPrice(14.99);
+        veggie.setImageUrl("https://example.com/veggie.jpg");
+        veggie.setAvailable(true);
+        veggie.setAvailableInColombo(true);
+        veggie.setAvailableInGalle(true);
+
+        Product hawaiian = new Product();
+        hawaiian.setProductId("4");
+        hawaiian.setName("Hawaiian");
+        hawaiian.setDescription("Ham and pineapple with cheese");
+        hawaiian.setPrice(13.99);
+        hawaiian.setImageUrl("https://example.com/hawaiian.jpg");
+        hawaiian.setAvailable(true);
+        hawaiian.setAvailableInColombo(true);
+        hawaiian.setAvailableInGalle(true);
+
+        products.add(margherita);
+        products.add(pepperoni);
+        products.add(veggie);
+        products.add(hawaiian);
+
+        return products;
+    }
 }

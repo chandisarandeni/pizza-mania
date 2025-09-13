@@ -1,226 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF5F5F5"
     android:orientation="vertical"
-    tools:context=".CartActivity">
+    android:background="@color/white">
 
     <!-- Header -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:elevation="4dp"
-        android:padding="16dp">
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/cardview_shadow_start_color"
+        android:elevation="4dp">
 
         <ImageView
-            android:id="@+id/iv_back_arrow"
+            android:id="@+id/iv_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/caret_left"
-            app:tint="#333333"
-            android:contentDescription="Back button" />
+            android:layout_marginStart="16dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:contentDescription="Back"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="4dp" />
 
         <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="My Cart"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#333333" />
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:text="Cart"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_clear_cart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:text="Clear"
-            android:textSize="14sp"
-            android:textColor="#FF6B6B"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp"
-            android:visibility="gone" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <!-- Cart Content -->
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- Cart Items RecyclerView -->
+        <!-- RecyclerView for cart items -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_cart_items"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_above="@+id/bottom_section"
             android:padding="8dp"
-            android:clipToPadding="false"
-            tools:listitem="@layout/activity_item_cart" />
+            android:visibility="gone" />
 
-        <!-- Empty Cart State -->
+        <!-- Empty cart message -->
+        <TextView
+            android:id="@+id/tv_empty_cart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Your cart is empty"
+            android:textSize="16sp"
+            android:textColor="@color/text_gray"
+            android:gravity="center" />
+
+        <!-- Bottom section with total and checkout -->
         <LinearLayout
-            android:id="@+id/ll_empty_cart"
+            android:id="@+id/bottom_section"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:orientation="vertical"
-            android:gravity="center"
-            android:padding="32dp"
-            android:visibility="gone">
+            android:background="@color/white"
+            android:elevation="4dp"
+            android:padding="16dp">
 
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:src="@drawable/pizza_placeholder"
-                android:alpha="0.3"
-                android:layout_marginBottom="24dp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/light_gray" />
 
             <TextView
+                android:id="@+id/tv_total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Your cart is empty"
-                android:textSize="20sp"
+                android:layout_marginTop="16dp"
+                android:text="Total: $0.00"
+                android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#666666"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add some delicious pizzas to get started!"
-                android:textSize="14sp"
-                android:textColor="#999999"
-                android:textAlignment="center"
-                android:layout_marginBottom="24dp" />
+                android:textColor="@color/black" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_browse_pizzas"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Browse Pizzas"
-                android:textColor="@android:color/white"
+                android:id="@+id/btn_checkout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:text="Proceed to Checkout"
+                android:textColor="@color/white"
                 android:background="@drawable/button_yellow"
-                android:paddingLeft="24dp"
-                android:paddingRight="24dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp" />
+                android:enabled="false" />
 
         </LinearLayout>
 
-    </FrameLayout>
-
-    <!-- Checkout Section -->
-    <LinearLayout
-        android:id="@+id/ll_checkout_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:elevation="8dp"
-        android:padding="16dp"
-        android:visibility="gone">
-
-        <!-- Order Summary -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Subtotal"
-                android:textSize="14sp"
-                android:textColor="#666666" />
-
-            <TextView
-                android:id="@+id/tv_subtotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$0.00"
-                android:textSize="14sp"
-                android:textColor="#666666" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Delivery Fee"
-                android:textSize="14sp"
-                android:textColor="#666666" />
-
-            <TextView
-                android:id="@+id/tv_delivery_fee"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$2.99"
-                android:textSize="14sp"
-                android:textColor="#666666" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#E0E0E0"
-            android:layout_marginVertical="8dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333" />
-
-            <TextView
-                android:id="@+id/tv_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$0.00"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#FF6B35" />
-
-        </LinearLayout>
-
-        <!-- Checkout Button -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_checkout"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Proceed to Checkout"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="#FF6B35" />
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>
