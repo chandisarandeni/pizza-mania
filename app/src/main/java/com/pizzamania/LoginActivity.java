@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             btnLogin.setEnabled(false);
-            Toast.makeText(this, "Logging in...", Toast.LENGTH_SHORT).show();
+
 
             // Call API
             repository.getCustomerByEmail(email, new NetworkClient.NetworkCallback() {
@@ -114,17 +114,31 @@ public class LoginActivity extends AppCompatActivity {
                             if (password.equals(backendPassword)) {
                                 // Login successful
                                 runOnUiThread(() -> {
+                                    Toast.makeText(LoginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(LoginActivity.this, PizzaListActivity.class));
-                                    finish();
+                                    finish(); // close LoginActivity so user can't go back
                                 });
                                 return;
                             }
+
                         }
 
                         // Invalid login
-                        runOnUiThread(() ->
-                                Toast.makeText(LoginActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show()
-                        );
+                        runOnUiThread(() -> {
+                            Toast.makeText(LoginActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+
+                            // clear email and password fields
+                            etPassword.setText("");
+
+                            // make vibrate
+                            btnLogin.setEnabled(true);
+                            btnLogin.performHapticFeedback(1);
+
+                            // again focus on email field
+                            etPassword.requestFocus();
+                        });
+
+
                     } catch (Exception e) {
                         runOnUiThread(() ->
                                 Toast.makeText(LoginActivity.this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
