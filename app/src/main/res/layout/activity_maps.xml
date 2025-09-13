@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/main"
+    android:background="@drawable/map_container_background">
+
+    <!-- Map Container -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_margin="16dp">
+
+        <!-- Google Map Fragment -->
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp" />
+
+        <!-- Map Overlay for Click Prevention (Optional) -->
+        <View
+            android:id="@+id/map_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#00000000"
+            android:visibility="gone" />
+
+        <!-- Location Marker Overlay -->
+        <ImageView
+            android:id="@+id/iv_location_marker"
+            android:layout_width="18dp"
+            android:layout_height="31dp"
+            android:layout_gravity="center"
+            android:contentDescription="Delivery location"
+            android:src="@drawable/location" />
+
+    </FrameLayout>
+
+</LinearLayout>

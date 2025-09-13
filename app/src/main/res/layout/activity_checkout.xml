@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFF8F8F8"
+    tools:context=".CheckoutActivity">
+
+    <!-- Header -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:elevation="2dp">
+
+        <!-- Back Arrow -->
+        <ImageView
+            android:id="@+id/iv_back_arrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/caret_left"
+            android:contentDescription="Back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp" />
+
+        <!-- Checkout Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Checkout"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FF2D2D2D" />
+
+        <!-- Heart Icon -->
+        <ImageView
+            android:id="@+id/iv_heart"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/heart_img"
+            android:contentDescription="Favorite"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="4dp" />
+
+    </RelativeLayout>
+
+    <!-- Main Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Order Summary -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date:"
+                        android:textSize="14sp"
+                        android:textColor="#FF666666" />
+
+                    <TextView
+                        android:id="@+id/tv_order_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="11 Feb, 2021"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF2D2D2D"
+                        android:layout_marginTop="2dp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Bill:"
+                        android:textSize="14sp"
+                        android:textColor="#FF666666" />
+
+                    <TextView
+                        android:id="@+id/tv_total_bill"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$28.8"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF2D2D2D"
+                        android:layout_marginTop="2dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Contact Info Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/section_background"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <!-- Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/contact"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="Contact info" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Contact Info"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF2D2D2D" />
+
+                </LinearLayout>
+
+                <!-- First Name -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="First Name"
+                    android:textSize="12sp"
+                    android:textColor="#FF666666"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/et_first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Enter first name..."
+                    android:textSize="14sp"
+                    android:textColor="#FF2D2D2D"
+                    android:textColorHint="#FF999999"
+                    android:background="@drawable/digital_input_background"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="12dp"
+                    android:inputType="textPersonName" />
+
+                <!-- Last Name -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last Name"
+                    android:textSize="12sp"
+                    android:textColor="#FF666666"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/et_last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Enter last name..."
+                    android:textSize="14sp"
+                    android:textColor="#FF2D2D2D"
+                    android:textColorHint="#FF999999"
+                    android:background="@drawable/digital_input_background"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="12dp"
+                    android:inputType="textPersonName" />
+
+                <!-- Mobile No -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mobile No."
+                    android:textSize="12sp"
+                    android:textColor="#FF666666"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/et_mobile_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Enter mobile number..."
+                    android:textSize="14sp"
+                    android:textColor="#FF2D2D2D"
+                    android:textColorHint="#FF999999"
+                    android:background="@drawable/digital_input_background"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="12dp"
+                    android:inputType="phone" />
+
+                <!-- Email -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textSize="12sp"
+                    android:textColor="#FF666666"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Enter your email address..."
+                    android:textSize="14sp"
+                    android:textColor="#FF2D2D2D"
+                    android:textColorHint="#FF999999"
+                    android:background="@drawable/digital_input_background"
+                    android:paddingHorizontal="16dp"
+                    android:inputType="textEmailAddress" />
+
+            </LinearLayout>
+
+            <!-- Address Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/section_background"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Address"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF2D2D2D"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Map Container -->
+                <FrameLayout
+                    android:id="@+id/map_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <!-- Payment Info Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/section_background"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp">
+
+                <!-- Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/card"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="Payment info" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Payment Info"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF2D2D2D" />
+
+                </LinearLayout>
+
+                <!-- Cardholder Name -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cardholder Name"
+                    android:textSize="12sp"
+                    android:textColor="#FF666666"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/et_cardholder_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Enter name..."
+                    android:textSize="14sp"
+                    android:textColor="#FF2D2D2D"
+                    android:textColorHint="#FF999999"
+                    android:background="@drawable/digital_input_background"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="12dp"
+                    android:inputType="textPersonName" />
+
+                <!-- Card Number -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Card Number"
+                    android:textSize="12sp"
+                    android:textColor="#FF666666"
+                    android:layout_marginBottom="4dp" />
+
+                <EditText
+                    android:id="@+id/et_card_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:hint="Enter your card number..."
+                    android:textSize="14sp"
+                    android:textColor="#FF2D2D2D"
+                    android:textColorHint="#FF999999"
+                    android:background="@drawable/digital_input_background"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginBottom="12dp"
+                    android:inputType="number"
+                    android:maxLength="19" />
+
+                <!-- Expiry and CVC Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <!-- Expiry Date -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="EXP Date"
+                            android:textSize="12sp"
+                            android:textColor="#FF666666"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/et_exp_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:hint="MM/YYYY"
+                            android:textSize="14sp"
+                            android:textColor="#FF2D2D2D"
+                            android:textColorHint="#FF999999"
+                            android:background="@drawable/digital_input_background"
+                            android:paddingHorizontal="16dp"
+                            android:inputType="number"
+                            android:maxLength="7" />
+
+                    </LinearLayout>
+
+                    <!-- CVC -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CVC"
+                            android:textSize="12sp"
+                            android:textColor="#FF666666"
+                            android:layout_marginBottom="4dp" />
+
+                        <EditText
+                            android:id="@+id/et_cvc"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:hint="123"
+                            android:textSize="14sp"
+                            android:textColor="#FF2D2D2D"
+                            android:textColorHint="#FF999999"
+                            android:background="@drawable/digital_input_background"
+                            android:paddingHorizontal="16dp"
+                            android:inputType="number"
+                            android:maxLength="4" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Save Card Info Checkbox -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <CheckBox
+                        android:id="@+id/cb_save_card"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:buttonTint="#FFFF5722" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save credit card information"
+                        android:textSize="14sp"
+                        android:textColor="#FF2D2D2D" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Continue Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="16dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_continue"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Continue"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_yellow"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
