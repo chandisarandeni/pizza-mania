@@ -32,11 +32,8 @@ public class PizzaListActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pizza_list);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.drawer_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
-            return insets;
-        });
+        // Initialize views first
+        drawerLayout = findViewById(R.id.drawer_layout);
         RecyclerView rv = findViewById(R.id.rv_pizzas);
 
         if (rv == null) {
@@ -57,7 +54,15 @@ public class PizzaListActivity extends AppCompatActivity {
         });
         rv.setAdapter(adapter);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        // Only set window insets if drawer_layout exists
+        if (drawerLayout != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(drawerLayout, (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+                return insets;
+            });
+        }
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer);
         drawerLayout.addDrawerListener(toggle);

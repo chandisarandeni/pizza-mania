@@ -2,96 +2,100 @@ package com.pizzamania;
 
 import androidx.fragment.app.FragmentActivity;
 
-import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.pizzamania.databinding.ActivityMapsBinding;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    public interface OnLocationSelectedListener {
-        void onLocationSelected(LatLng location, String address);
-    }
-
-    private MapView mapView;
-    private GoogleMap googleMap;
-    private Context context;
-    private OnLocationSelectedListener locationListener;
+    private GoogleMap mMap;
     private LatLng currentLocation;
     private Marker currentMarker;
 
-    // Default location (you can change this to your restaurant location)
+    // Default location (Pizza restaurant location)
     private static final LatLng DEFAULT_LOCATION = new LatLng(37.7749, -122.4194); // San Francisco
     private static final float DEFAULT_ZOOM = 15f;
 
-    public MapsActivity(Context context, ViewGroup parent) {
-        this.context = context;
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View mapContainer = inflater.inflate(R.layout.activity_maps, parent, false);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
-        mapView = mapContainer.findViewById(R.id.map_view);
-        mapView.onCreate(null);
-        mapView.onResume();
-        mapView.getMapAsync(this);
+        // Get location from intent if passed from CheckoutActivity
+        Intent intent = getIntent();
+        if (intent.hasExtra("latitude") && intent.hasExtra("longitude")) {
+            double lat = intent.getDoubleExtra("latitude", DEFAULT_LOCATION.latitude);
+            double lng = intent.getDoubleExtra("longitude", DEFAULT_LOCATION.longitude);
+            currentLocation = new LatLng(lat, lng);
+        } else {
+            currentLocation = DEFAULT_LOCATION;
+        }
 
-        parent.addView(mapContainer);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
+
+        // Add back button functionality (you'll need to add this to your layout)
+        setupBackButton();
+    }
+
+    private void setupBackButton() {
+        // If you have a back button in your layout, uncomment this:
+        // ImageView backButton = findViewById(R.id.iv_back);
+        // if (backButton != null) {
+        //     backButton.setOnClickListener(v -> finish());
+        // }
+
+        // For now, handle back press
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+            }
+        });
     }
 
     @Override
-    public void onMapReady(GoogleMap map) {
-        this.googleMap = map;
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
         setupMap();
-        setDefaultLocation();
+        setLocationOnMap();
     }
 
     private void setupMap() {
-        if (googleMap == null) return;
+        if (mMap == null) return;
 
-        // Map settings
-        googleMap.getUiSettings().setZoomControlsEnabled(true);
-        googleMap.getUiSettings().setMapToolbarEnabled(false);
-        googleMap.getUiSettings().setRotateGesturesEnabled(false);
-        googleMap.getUiSettings().setTiltGesturesEnabled(false);
+        // Map settings with full functionality for full screen
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setRotateGesturesEnabled(true);
+        mMap.getUiSettings().setTiltGesturesEnabled(true);
+        mMap.getUiSettings().setScrollGesturesEnabled(true);
+        mMap.getUiSettings().setZoomGesturesEnabled(true);
 
         // Set map click listener
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 setLocation(latLng);
-                // Get address from coordinates
-                getAddressFromLocation(latLng);
-            }
-        });
-
-        // Set marker click listener
-        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                return true; // Consume the event
             }
         });
     }
 
-    private void setDefaultLocation() {
-        currentLocation = DEFAULT_LOCATION;
+    private void setLocationOnMap() {
         updateLocationMarker();
         moveCamera(currentLocation, DEFAULT_ZOOM);
     }
@@ -103,7 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateLocationMarker() {
-        if (googleMap == null || currentLocation == null) return;
+        if (mMap == null || currentLocation == null) return;
 
         // Remove existing marker
         if (currentMarker != null) {
@@ -114,98 +118,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(currentLocation)
                 .title("Delivery Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                .snippet("Your pizza will be delivered here")
+                .draggable(true); // Make marker draggable in full screen
 
-        currentMarker = googleMap.addMarker(markerOptions);
+        currentMarker = mMap.addMarker(markerOptions);
+
+        // Add marker drag listener
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {}
+
+            @Override
+            public void onMarkerDrag(Marker marker) {}
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                currentLocation = marker.getPosition();
+            }
+        });
     }
 
     private void moveCamera(LatLng location, float zoom) {
-        if (googleMap == null) return;
-
-        googleMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(location, zoom),
-                1000,
-                null
-        );
-    }
-
-    private void getAddressFromLocation(LatLng location) {
-        if (context == null) return;
-
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocation(
-                    location.latitude,
-                    location.longitude,
-                    1
-            );
-
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                String addressText = address.getAddressLine(0);
-
-                if (locationListener != null) {
-                    locationListener.onLocationSelected(location, addressText);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Fallback to coordinates
-            String addressText = String.format("%.6f, %.6f",
-                    location.latitude, location.longitude);
-
-            if (locationListener != null) {
-                locationListener.onLocationSelected(location, addressText);
-            }
-        }
-    }
-
-    public void setOnLocationSelectedListener(OnLocationSelectedListener listener) {
-        this.locationListener = listener;
-    }
-
-    public LatLng getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void onResume() {
-        if (mapView != null) {
-            mapView.onResume();
-        }
-    }
-
-    public void onPause() {
-        if (mapView != null) {
-            mapView.onPause();
-        }
-    }
-
-    public void onDestroy() {
-        if (mapView != null) {
-            mapView.onDestroy();
-        }
-    }
-
-    public void onLowMemory() {
-        if (mapView != null) {
-            mapView.onLowMemory();
-        }
-    }
-
-    // Method to set location programmatically
-    public void updateDeliveryLocation(String address) {
-        if (address == null || address.isEmpty()) return;
-
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        try {
-            List<Address> addresses = geocoder.getFromLocationName(address, 1);
-            if (addresses != null && !addresses.isEmpty()) {
-                Address location = addresses.get(0);
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                setLocation(latLng);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mMap != null && location != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
         }
     }
 }
