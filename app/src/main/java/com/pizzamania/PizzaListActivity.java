@@ -84,5 +84,15 @@ public class PizzaListActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CartActivity.class);
             startActivity(intent);
         });
+
+        // set logout click listener
+        navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(item -> {
+            // Handle logout action
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        });
     }
 }
