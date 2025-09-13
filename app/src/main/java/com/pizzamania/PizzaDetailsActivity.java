@@ -31,7 +31,7 @@ public class PizzaDetailsActivity extends AppCompatActivity {
     private double basePriceSmall = 7.99;
     private double basePriceMedium = 9.99;
     private double basePriceLarge = 12.99;
-    private double currentBasePrice = 7.99; // Default to small
+    private double currentBasePrice = basePriceSmall; // Default to small
     private String selectedSize = "Small";
 
     private CartDbHelper cartDbHelper;
@@ -64,6 +64,14 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         String pizzaDescription = getIntent().getStringExtra("pizza_description");
         double pizzaPrice = getIntent().getDoubleExtra("pizza_price", 0.0);
         pizzaImageUrl = getIntent().getStringExtra("pizza_image_url"); // Fixed key name
+
+
+        if (!Double.isNaN(pizzaPrice) && pizzaPrice > 0) {
+            basePriceSmall = pizzaPrice;
+            basePriceMedium = pizzaPrice + 2.00;
+            basePriceLarge = pizzaPrice + 4.00;
+            currentBasePrice = basePriceSmall;
+        }
 
         // Update UI with pizza data
         TextView titleView = findViewById(R.id.tv_pizza_title);
