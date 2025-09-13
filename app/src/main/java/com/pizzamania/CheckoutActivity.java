@@ -91,12 +91,8 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
         // Set map click listener for selecting delivery location
         mMap.setOnMapClickListener(latLng -> {
             setLocation(latLng);
-        });
-
-        // Set map click listener to open full screen when tapped
-        mMap.setOnMapClickListener(latLng -> {
-            setLocation(latLng);
-            openFullScreenMap();
+            // Optional: Open full screen on click
+            // openFullScreenMap();
         });
     }
 

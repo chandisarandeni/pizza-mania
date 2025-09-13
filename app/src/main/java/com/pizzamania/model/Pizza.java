@@ -1,33 +1,44 @@
 package com.pizzamania.model;
 
 public class Pizza {
-    private final int id;
-    private final String name;
-    private final String description;
-    private final double price;
-    private final int imageResId;
+    private String name;
+    private String description;
+    private double price;
+    private String imageUrl;
+    private boolean isAvailable;
+    private boolean isAvailableInColombo;
+    private boolean isAvailableInGalle;
 
-    public Pizza(int id, String name, String description, double price, int imageResId) {
-        this.id = id;
+    public Pizza( String name, String description, double price, String imageUrl, boolean isAvailable, boolean isAvailableInColombo, boolean isAvailableInGalle) {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.imageResId = imageResId;
+        this.imageUrl = imageUrl;
+        this.isAvailable = isAvailable;
+        this.isAvailableInColombo = isAvailableInColombo;
+        this.isAvailableInGalle = isAvailableInGalle;
     }
 
-    public int getId() {
-        return id;
-    }
-    public String getName() {
+   public String getName() {
         return name;
-    }
+   }
     public String getDescription() {
-        return description;
+          return description;
     }
     public double getPrice() {
         return price;
     }
-    public int getImageResId() {
-        return imageResId;
+    public String getImageUrl() {
+        return imageUrl;
     }
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+    public boolean isAvailableInColombo() {
+        return isAvailableInColombo;
+    }
+    public boolean isAvailableInGalle() {
+        return isAvailableInGalle;
+    }
+
 }

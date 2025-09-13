@@ -2,6 +2,7 @@ package com.pizzamania;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
@@ -17,14 +18,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.pizzamania.adapter.PizzaAdapter;
+import com.pizzamania.api.ApiServices;
+import com.pizzamania.api.RetrofitClient;
 import com.pizzamania.model.Pizza;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class PizzaListActivity extends AppCompatActivity {
 
+    private static final String TAG = "PizzaListActivity";
     private DrawerLayout drawerLayout;
+    private RecyclerView rv;
+    private PizzaAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,25 +44,7 @@ public class PizzaListActivity extends AppCompatActivity {
 
         // Initialize views first
         drawerLayout = findViewById(R.id.drawer_layout);
-        RecyclerView rv = findViewById(R.id.rv_pizzas);
-
-        if (rv == null) {
-            throw new IllegalStateException("RecyclerView with id `rv_pizzas` not found in `activity_pizza_list.xml`");
-        }// adjust id
-        rv.setLayoutManager(new GridLayoutManager(this, 2));
-        List<Pizza> list = new ArrayList<>();
-        list.add(new Pizza(1, "Margherita", "Tomato, mozzarella", 8.50, R.drawable.pizza_placeholder));
-        list.add(new Pizza(2, "Pepperoni", "Pepperoni, cheese", 9.50, R.drawable.pizza_placeholder));
-        PizzaAdapter adapter = new PizzaAdapter(this, list, pizza -> {
-            // Navigate to PizzaDetailsActivity with pizza data
-            Intent intent = new Intent(this, PizzaDetailsActivity.class);
-            intent.putExtra("pizza_name", pizza.getName());
-            intent.putExtra("pizza_description", pizza.getDescription());
-            intent.putExtra("pizza_price", pizza.getPrice());
-            intent.putExtra("pizza_image", pizza.getImageResId());
-            startActivity(intent);
-        });
-        rv.setAdapter(adapter);
+        rv = findViewById(R.id.rv_pizzas);
 
         // Only set window insets if drawer_layout exists
         if (drawerLayout != null) {
@@ -64,25 +56,68 @@ public class PizzaListActivity extends AppCompatActivity {
         }
 
         NavigationView navigationView = findViewById(R.id.nav_view);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        if (navigationView != null && drawerLayout != null) {
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer);
+            drawerLayout.addDrawerListener(toggle);
+            toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(item -> {
-            // Handle menu item clicks here
-            drawerLayout.closeDrawer(GravityCompat.START);
-            return true;
-        });
+            navigationView.setNavigationItemSelectedListener(item -> {
+                // Handle menu item clicks here
+                drawerLayout.closeDrawer(GravityCompat.START);
+                return true;
+            });
+        }
+
+        // Set up RecyclerView
+        if (rv != null) {
+            rv.setLayoutManager(new GridLayoutManager(this, 2));
+            adapter = new PizzaAdapter(new ArrayList<>(), this);
+            rv.setAdapter(adapter);
+        }
 
         // Set up menu icon click to open drawer
         ImageView menuIcon = findViewById(R.id.iv_menu);
-        menuIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        if (menuIcon != null && drawerLayout != null) {
+            menuIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+        }
 
         // Set up cart icon click to open CartActivity
         ImageView cartIcon = findViewById(R.id.iv_cart);
-        cartIcon.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CartActivity.class);
-            startActivity(intent);
+        if (cartIcon != null) {
+            cartIcon.setOnClickListener(v -> {
+                Intent intent = new Intent(this, CartActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        // Fetch pizzas from API
+        fetchPizzas();
+    }
+
+    private void fetchPizzas() {
+        ApiServices api = RetrofitClient.getInstance().create(ApiServices.class);
+        Call<List<Pizza>> call = api.getPizzas();
+        call.enqueue(new Callback<List<Pizza>>() {
+            @Override
+            public void onResponse(Call<List<Pizza>> call, Response<List<Pizza>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Pizza> pizzas = response.body();
+                    if (adapter != null) {
+                        adapter.updateItems(pizzas);
+                    }
+                } else {
+                    Log.e(TAG, "API response empty or failed: " + response.code());
+                    // For testing, load sample data if API fails
+                    loadSamplePizzas();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Pizza>> call, Throwable t) {
+                Log.e(TAG, "API call failed", t);
+                // For testing, load sample data if API fails
+                loadSamplePizzas();
+            }
         });
 
         // Help and support click listener
@@ -104,4 +139,20 @@ public class PizzaListActivity extends AppCompatActivity {
             return true;
         });
     }
+
+    private void loadSamplePizzas() {
+        // Load sample pizzas for testing
+        List<Pizza> samplePizzas = new ArrayList<>();
+        samplePizzas.add(new Pizza("Margherita", "Classic pizza with tomato and mozzarella", 12.99, "", true, true, true));
+        samplePizzas.add(new Pizza("Pepperoni", "Pepperoni with mozzarella cheese", 14.99, "", true, true, true));
+        samplePizzas.add(new Pizza("Hawaiian", "Ham and pineapple with cheese", 15.99, "", true, true, false));
+        samplePizzas.add(new Pizza("Meat Lovers", "Pepperoni, sausage, and ham", 17.99, "", true, true, true));
+        samplePizzas.add(new Pizza("Veggie Supreme", "Fresh vegetables and cheese", 16.99, "", true, false, true));
+        samplePizzas.add(new Pizza("BBQ Chicken", "BBQ sauce with grilled chicken", 16.99, "", true, true, true));
+
+        if (adapter != null) {
+            adapter.updateItems(samplePizzas);
+        }
+    }
+
 }
