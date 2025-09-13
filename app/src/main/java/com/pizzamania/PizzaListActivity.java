@@ -36,6 +36,8 @@ public class PizzaListActivity extends AppCompatActivity {
     private RecyclerView rv;
     private PizzaAdapter adapter;
 
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +46,7 @@ public class PizzaListActivity extends AppCompatActivity {
 
         // Initialize views first
         drawerLayout = findViewById(R.id.drawer_layout);
+
         rv = findViewById(R.id.rv_pizzas);
 
         // Only set window insets if drawer_layout exists
@@ -55,7 +58,7 @@ public class PizzaListActivity extends AppCompatActivity {
             });
         }
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         if (navigationView != null && drawerLayout != null) {
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer);
             drawerLayout.addDrawerListener(toggle);
