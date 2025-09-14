@@ -19,7 +19,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/caret_left"
             android:contentDescription="Back"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:padding="4dp" />

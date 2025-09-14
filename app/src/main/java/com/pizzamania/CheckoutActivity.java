@@ -3,6 +3,7 @@ package com.pizzamania;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,6 +43,12 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 
         setupMap();
         setupBackButton();
+
+        double checkoutTotal = getIntent().getDoubleExtra("total_price", 0.0);
+        TextView totalText = findViewById(R.id.tv_total_bill);
+        if(totalText != null) {
+            totalText.setText(String.format("$%.2f", checkoutTotal));
+        }
     }
 
     private void setupMap() {

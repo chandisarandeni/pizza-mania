@@ -56,6 +56,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         if (checkoutButton != null) {
             checkoutButton.setOnClickListener(v -> {
                 Intent intent = new Intent(this, CheckoutActivity.class);
+                // Pass the actual numeric total value instead of the formatted text
+                double totalAmount = calculateTotalPrice();
+                intent.putExtra("total_price", totalAmount);
                 startActivity(intent);
             });
         }
@@ -93,11 +96,16 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         }
     }
 
-    private void updateTotalPrice() {
+    private double calculateTotalPrice() {
         double total = 0.0;
         for (CartItem item : cartItems) {
             total += item.getPrice() * item.getQuantity();
         }
+        return total;
+    }
+
+    private void updateTotalPrice() {
+        double total = calculateTotalPrice();
         if (totalPriceText != null) {
             totalPriceText.setText(String.format("Total: $%.2f", total));
         }
@@ -136,4 +144,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
             dbHelper.close();
         }
     }
+
+
+
 }
