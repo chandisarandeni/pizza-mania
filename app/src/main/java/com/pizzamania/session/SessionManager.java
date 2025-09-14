@@ -16,6 +16,7 @@ public class SessionManager {
     private static final String KEY_NAME = "key_name";
     private static final String KEY_PHONE = "key_phone";
     private static final String KEY_ADDRESS = "key_address";
+    private static final String KEY_CUSTOMER_ID = "key_customer_id"; // new key
 
     private static SessionManager instance;
     private final SharedPreferences prefs;
@@ -42,20 +43,24 @@ public class SessionManager {
         return instance;
     }
 
+    // Save user info including customerId
+    public void saveUser(String email, String name, String phone, String address, String customerId) {
+        prefs.edit()
+                .putString(KEY_EMAIL, email)
+                .putString(KEY_NAME, name)
+                .putString(KEY_PHONE, phone)
+                .putString(KEY_ADDRESS, address)
+                .putString(KEY_CUSTOMER_ID, customerId) // save customerId
+                .apply();
+    }
+
+    public String getCustomerId() {
+        return prefs.getString(KEY_CUSTOMER_ID, null);
+    }
+
     public void saveEmail(@NonNull String email) {
         prefs.edit().putString(KEY_EMAIL, email).apply();
     }
-
-    //save users
-        public void saveUser(@NonNull String email, @NonNull String name, @NonNull String phone, @NonNull String address) {
-            prefs.edit()
-                    .putString(KEY_EMAIL, email)
-                    .putString(KEY_NAME, name)
-                    .putString(KEY_PHONE, phone)
-                    .putString(KEY_ADDRESS, address)
-                    .apply();
-        }
-
 
     public String getEmail() {
         return prefs.getString(KEY_EMAIL, null);
@@ -78,15 +83,6 @@ public class SessionManager {
     }
 
     public void clear() {
-        prefs.edit().remove(KEY_EMAIL).apply();
-    }
-
-    public void createFakeUser() {
-        saveUser(
-                "guest@pizzamania.com",
-                "Guest User",
-                "000-000-0000",
-                "123 Fake Street, Nowhere"
-        );
+        prefs.edit().clear().apply();
     }
 }

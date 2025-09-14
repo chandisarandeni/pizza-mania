@@ -20,7 +20,6 @@ import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.model.Customer;
 import com.pizzamania.context.customer.repository.CustomerRepository;
 import com.pizzamania.session.SessionManager;
-import com.pizzamania.session.User;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,6 +32,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+
+        // Auto-login if already logged in
+        if (SessionManager.getInstance(this).isLoggedIn()) {
+            startActivity(new Intent(this, PizzaListActivity.class));
+            finish();
+            return;
+        }
 
         // Adjust for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login), (v, insets) -> {
@@ -83,7 +89,6 @@ public class LoginActivity extends AppCompatActivity {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
-            // Validation
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
                 return;
@@ -96,56 +101,48 @@ public class LoginActivity extends AppCompatActivity {
 
             btnLogin.setEnabled(false);
 
-
-            // Call API
             repository.getCustomerByEmail(email, new NetworkClient.NetworkCallback() {
                 @Override
                 public void onSuccess(String response) {
                     runOnUiThread(() -> btnLogin.setEnabled(true));
-                    System.out.println("API Response: " + response);
-
                     try {
                         Gson gson = new Gson();
-                        // Parse JSON array
                         Customer[] customers = gson.fromJson(response, Customer[].class);
 
                         if (customers.length > 0) {
-                            Customer customer = customers[0]; // take first customer
+                            Customer customer = customers[0];
                             String backendPassword = customer.getPassword() != null ? customer.getPassword().trim() : "";
 
                             if (password.equals(backendPassword)) {
-                                // Login successful
+                                // Save user session including customerId
+                                SessionManager.getInstance(LoginActivity.this).saveUser(
+                                        customer.getEmail(),
+                                        customer.getName() != null ? customer.getName() : "",
+                                        customer.getPhone() != null ? customer.getPhone() : "",
+                                        customer.getAddress() != null ? customer.getAddress() : "",
+                                        customer.getCustomerId() // <- Save customerId here
+                                );
+
                                 runOnUiThread(() -> {
                                     Toast.makeText(LoginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(LoginActivity.this, PizzaListActivity.class));
-                                    SessionManager.getInstance(LoginActivity.this).saveEmail(email);
-                                    finish(); // close LoginActivity so user can't go back
+                                    finish();
                                 });
                                 return;
                             }
-
                         }
 
                         // Invalid login
                         runOnUiThread(() -> {
                             Toast.makeText(LoginActivity.this, "Invalid email or password", Toast.LENGTH_SHORT).show();
-
-                            // clear email and password fields
                             etPassword.setText("");
-
-                            // make vibrate
                             btnLogin.setEnabled(true);
                             btnLogin.performHapticFeedback(1);
-
-                            // again focus on email field
                             etPassword.requestFocus();
                         });
 
-
                     } catch (Exception e) {
-                        runOnUiThread(() ->
-                                Toast.makeText(LoginActivity.this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                        );
+                        runOnUiThread(() -> Toast.makeText(LoginActivity.this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                         e.printStackTrace();
                     }
                 }
@@ -162,13 +159,8 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
     private void setupNavigationButtons() {
-        findViewById(R.id.btn_signup).setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, SignupActivity.class))
-        );
-        findViewById(R.id.tv_forgot).setOnClickListener(v ->
-                startActivity(new Intent(LoginActivity.this, ForgotPasswordOtpActivity.class))
-        );
+        findViewById(R.id.btn_signup).setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
+        findViewById(R.id.tv_forgot).setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, ForgotPasswordOtpActivity.class)));
     }
 }
