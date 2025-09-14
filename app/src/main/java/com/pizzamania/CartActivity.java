@@ -59,6 +59,21 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
                 // Pass the actual numeric total value instead of the formatted text
                 double totalAmount = calculateTotalPrice();
                 intent.putExtra("total_price", totalAmount);
+                try {
+                   org.json.JSONArray cartArray = new org.json.JSONArray();
+                   for(CartItem ci : cartItems) {
+                       org.json.JSONObject obj = new org.json.JSONObject();
+                       obj.put("id", ci.getId());
+                       obj.put("price", ci.getPrice());
+                       obj.put("quantity", ci.getQuantity());
+                       obj.put("name", ci.getName());      // add name
+                       obj.put("size", ci.getSize());      // add size if you have it
+                       cartArray.put(obj);
+                   }
+                   intent.putExtra("cart_items_json", cartArray.toString());
+                }catch(Exception e) {
+                    intent.putExtra("cart_items_json", "[]");
+                }
                 startActivity(intent);
             });
         }
