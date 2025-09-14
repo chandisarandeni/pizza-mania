@@ -1,6 +1,9 @@
 package com.pizzamania;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -9,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -20,7 +25,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.pizzamania.session.SessionManager;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -30,8 +39,11 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
     private Marker currentMarker;
 
     // Default location for delivery
-    private static final LatLng DEFAULT_LOCATION = new LatLng(37.7749, -122.4194); // San Francisco
+    private static final LatLng DEFAULT_LOCATION = new LatLng(6.8869, 79.8653); // NIBM Colombo
     private static final float DEFAULT_ZOOM = 15f;
+
+    private static final int REQUEST_LOCATION_PERMISSION = 1001;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +58,8 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 
         setupMap();
         setupBackButton();
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         double checkoutTotal = getIntent().getDoubleExtra("total_price", 0.0);
         TextView totalText = findViewById(R.id.tv_total_bill);
@@ -110,7 +124,8 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         setupMapSettings();
-        setDefaultLocation();
+        // Enable real location tracking instead of just setting default location
+        enableMyLocationAndCenter();
     }
 
     private void setupMapSettings() {
@@ -128,9 +143,64 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
         mMap.setOnMapClickListener(latLng -> {
             setLocation(latLng);
             // Optional: Open full screen on click
-            // openFullScreenMap();
+            openFullScreenMap();
         });
     }
+
+    private void enableMyLocationAndCenter() {
+        if (mMap == null) return;
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            try {
+                mMap.setMyLocationEnabled(true);
+            } catch (SecurityException e) {
+                // ignore - we checked permission
+            }
+
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                updateLocationMarker();
+                                moveCamera(currentLocation, DEFAULT_ZOOM);
+                            } else {
+                                // fallback to default
+                                setDefaultLocation();
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        setDefaultLocation();
+                    });
+
+        } else {
+            // Permission not granted -> request it
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION);
+            // meanwhile show default
+            setDefaultLocation();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission granted, enable location
+                enableMyLocationAndCenter();
+            } else {
+                Toast.makeText(this, "Location permission denied — using default location.", Toast.LENGTH_SHORT).show();
+                setDefaultLocation();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
 
     private void openFullScreenMap() {
         Intent intent = new Intent(this, MapsActivity.class);
