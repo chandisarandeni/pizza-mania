@@ -12,4 +12,9 @@ public class CustomerRepository {
     public void getCustomerByEmail(String email, NetworkClient.NetworkCallback callback) {
         CustomerApi.getCustomerByEmail(email, callback);
     }
+
+    // Method : update customer details
+    public void updateCustomer(String customerId, String jsonBody, NetworkClient.NetworkCallback callback) {
+        CustomerApi.updateCustomerByEmail(customerId, jsonBody, callback);
+    }
 }
