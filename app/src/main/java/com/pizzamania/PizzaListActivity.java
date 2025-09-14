@@ -72,8 +72,7 @@ public class PizzaListActivity extends AppCompatActivity {
 
     private void setupDrawer() {
         if (navigationView != null && drawerLayout != null) {
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout,
-                    R.string.open_drawer, R.string.close_drawer);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer);
             drawerLayout.addDrawerListener(toggle);
             toggle.syncState();
 
@@ -89,29 +88,32 @@ public class PizzaListActivity extends AppCompatActivity {
     private void setupNavigationMenu() {
         if (navigationView == null) return;
 
-        navigationView.getMenu().findItem(R.id.nav_help_support)
-                .setOnMenuItemClickListener(item -> {
-                    startActivity(new Intent(this, HelpAndSupportActivity.class));
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    return true;
-                });
+        navigationView.getMenu().findItem(R.id.nav_help_support).setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(this, HelpAndSupportActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
 
-        navigationView.getMenu().findItem(R.id.nav_logout)
-                .setOnMenuItemClickListener(item -> {
-                    SessionManager.getInstance(this).clear();
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
-                    return true;
-                });
+        navigationView.getMenu().findItem(R.id.nav_logout).setOnMenuItemClickListener(item -> {
+            SessionManager.getInstance(this).clear();
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        });
 
-        navigationView.getMenu().findItem(R.id.nav_profile)
-                .setOnMenuItemClickListener(item -> {
-                    startActivity(new Intent(this, MyProfileActivity.class));
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    return true;
-                });
+        navigationView.getMenu().findItem(R.id.nav_profile).setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(this, MyProfileActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+
+        navigationView.getMenu().findItem(R.id.nav_settings).setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
     }
 
     private void setupRecyclerView() {
