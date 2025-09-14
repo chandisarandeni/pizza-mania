@@ -49,6 +49,9 @@ public class MyProfileActivity extends AppCompatActivity {
 
         btnEdit.setOnClickListener(v -> enableEditMode());
         btnSave.setOnClickListener(v -> saveProfile());
+
+        // navigation back
+        findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
     }
 
     private void loadProfile() {
