@@ -19,6 +19,8 @@ import com.google.gson.Gson;
 import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.model.Customer;
 import com.pizzamania.context.customer.repository.CustomerRepository;
+import com.pizzamania.session.SessionManager;
+import com.pizzamania.session.User;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -116,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                                 runOnUiThread(() -> {
                                     Toast.makeText(LoginActivity.this, "Logging in...", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(LoginActivity.this, PizzaListActivity.class));
+                                    SessionManager.getInstance(LoginActivity.this).saveEmail(email);
                                     finish(); // close LoginActivity so user can't go back
                                 });
                                 return;

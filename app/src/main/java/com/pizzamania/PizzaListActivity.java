@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -21,6 +22,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.pizzamania.adapter.PizzaAdapter;
 import com.pizzamania.context.product.model.Product;
 import com.pizzamania.context.product.repository.ProductRepository;
+import com.pizzamania.session.SessionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +105,18 @@ public class PizzaListActivity extends AppCompatActivity {
 
         // Fetch products from API using OkHttp
         fetchProducts();
+
+        //show email data
+        String email = SessionManager.getInstance(this).getEmail();
+        if(email != null && !email.isEmpty()) {
+            Toast.makeText(this, "Logged in as: " + email, Toast.LENGTH_SHORT).show();
+        }
+        else {
+            SessionManager sessionManager = SessionManager.getInstance(this);
+            sessionManager.createFakeUser();
+            sessionManager.saveEmail(sessionManager.getEmail());
+            Toast.makeText(this, "No user found, created a fake user." + sessionManager.getEmail(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupNavigationMenu() {
