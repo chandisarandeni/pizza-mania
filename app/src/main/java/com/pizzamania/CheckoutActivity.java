@@ -29,6 +29,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.pizzamania.context.common.network.NetworkClient;
+import com.pizzamania.context.customer.repository.CustomerRepository;
 import com.pizzamania.session.SessionManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -50,6 +52,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
     private GoogleMap mMap;
     private LatLng currentLocation;
     private Marker currentMarker;
+    private final CustomerRepository customerRepository = new CustomerRepository();
 
     // Default location for delivery
     private static final LatLng DEFAULT_LOCATION = new LatLng(6.8869, 79.8653); // NIBM Colombo
@@ -84,32 +87,14 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
             totalText.setText(String.format("$%.2f", checkoutTotal));
         }
 
-        EditText fullNameText = findViewById(R.id.et_full_name);
-        EditText phoneText = findViewById(R.id.et_mobile_no);
-        EditText emailText = findViewById(R.id.et_email);
-
         String email = SessionManager.getInstance(this).getEmail();
 
-        String name = SessionManager.getInstance(this).getName();
-
-        String phone = SessionManager.getInstance(this).getPhone();
-
         if(email != null && !email.isEmpty()) {
-            Toast.makeText(this, "Logged in as: " + email, Toast.LENGTH_LONG).show();
-            emailText.setText(email);
-        }
-
-        if(name != null && !name.isEmpty()) {
-            fullNameText.setText(name);
-        }
-
-        if(phone != null && !phone.isEmpty()) {
-            phoneText.setText(phone);
-        }
-        else {
-            Toast.makeText(this, "Not logged in", Toast.LENGTH_LONG).show();
+            fetchCustomerAndPopulate(email);
         }
     }
+
+
 
     private void setupMap() {
         // Create MapView programmatically
@@ -370,6 +355,8 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -400,5 +387,85 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
         if (mapView != null) {
             mapView.onLowMemory();
         }
+    }
+
+    private void fetchCustomerAndPopulate(String email) {
+        if (email == null || email.isEmpty()) return;
+
+        customerRepository.getCustomerByEmail(email, new NetworkClient.NetworkCallback() {
+            @Override
+            public void onSuccess(String responseBody) {
+                try {
+                    // Log the raw response for debugging
+                    android.util.Log.d("CheckoutActivity", "Raw API Response: " + responseBody);
+
+                    // Check if response is an array or object
+                    JSONObject customerData;
+                    if (responseBody.trim().startsWith("[")) {
+                        // Response is an array, get the first customer object
+                        JSONArray jsonArray = new JSONArray(responseBody);
+                        if (jsonArray.length() > 0) {
+                            customerData = jsonArray.getJSONObject(0);
+                        } else {
+                            runOnUiThread(() -> Toast.makeText(CheckoutActivity.this, "No customer data found", Toast.LENGTH_SHORT).show());
+                            return;
+                        }
+                    } else {
+                        // Response is a direct object
+                        customerData = new JSONObject(responseBody);
+                    }
+
+                    // Extract customer data
+                    String name = customerData.optString("name", "");
+                    String phone = customerData.optString("phone", "");
+                    String address = customerData.optString("address", "");
+                    String customerId = customerData.optString("customerId", "");
+                    String fetchedEmail = customerData.optString("email", email);
+
+                    // Log extracted values for debugging
+                    android.util.Log.d("CheckoutActivity", "Extracted - Name: " + name + ", Phone: " + phone + ", Email: " + fetchedEmail);
+
+                    // Save to session
+                    SessionManager.getInstance(CheckoutActivity.this)
+                            .saveUser(fetchedEmail, name, phone, address, customerId);
+
+                    // Update UI
+                    runOnUiThread(() -> {
+                        EditText fullNameText = findViewById(R.id.et_full_name);
+                        EditText phoneText = findViewById(R.id.et_mobile_no);
+                        EditText emailText = findViewById(R.id.et_email);
+
+                        // Log UI elements found
+                        android.util.Log.d("CheckoutActivity", "UI Elements - Name field: " + (fullNameText != null) +
+                                          ", Phone field: " + (phoneText != null) +
+                                          ", Email field: " + (emailText != null));
+
+                        if (fullNameText != null) {
+                            fullNameText.setText(name);
+                            android.util.Log.d("CheckoutActivity", "Set name field to: " + name);
+                        }
+                        if (phoneText != null) {
+                            phoneText.setText(phone);
+                            android.util.Log.d("CheckoutActivity", "Set phone field to: " + phone);
+                        }
+                        if (emailText != null) {
+                            emailText.setText(fetchedEmail);
+                            android.util.Log.d("CheckoutActivity", "Set email field to: " + fetchedEmail);
+                        }
+
+                        Toast.makeText(CheckoutActivity.this, "Data loaded: " + name + " | " + phone, Toast.LENGTH_LONG).show();
+                    });
+
+                } catch (Exception e) {
+                    android.util.Log.e("CheckoutActivity", "Parse error: " + e.getMessage(), e);
+                    runOnUiThread(() -> Toast.makeText(CheckoutActivity.this, "Error parsing data: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                }
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                runOnUiThread(() -> Toast.makeText(CheckoutActivity.this, "Network error: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        });
     }
 }
