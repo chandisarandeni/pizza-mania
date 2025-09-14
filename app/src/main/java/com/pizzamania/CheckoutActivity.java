@@ -2,8 +2,10 @@ package com.pizzamania;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +20,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.pizzamania.session.SessionManager;
 
 public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -48,6 +51,32 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
         TextView totalText = findViewById(R.id.tv_total_bill);
         if(totalText != null) {
             totalText.setText(String.format("$%.2f", checkoutTotal));
+        }
+
+        EditText fullNameText = findViewById(R.id.et_full_name);
+        EditText phoneText = findViewById(R.id.et_mobile_no);
+        EditText emailText = findViewById(R.id.et_email);
+
+        String email = SessionManager.getInstance(this).getEmail();
+
+        String name = SessionManager.getInstance(this).getName();
+
+        String phone = SessionManager.getInstance(this).getPhone();
+
+        if(email != null && !email.isEmpty()) {
+            Toast.makeText(this, "Logged in as: " + email, Toast.LENGTH_LONG).show();
+            emailText.setText(email);
+        }
+
+        if(name != null && !name.isEmpty()) {
+            fullNameText.setText(name);
+        }
+
+        if(phone != null && !phone.isEmpty()) {
+            phoneText.setText(phone);
+        }
+        else {
+            Toast.makeText(this, "Not logged in", Toast.LENGTH_LONG).show();
         }
     }
 

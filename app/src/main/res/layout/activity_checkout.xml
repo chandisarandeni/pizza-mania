@@ -163,45 +163,28 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="First Name"
+                    android:text="Full Name"
                     android:textSize="12sp"
                     android:textColor="#FF666666"
                     android:layout_marginBottom="4dp" />
 
                 <EditText
-                    android:id="@+id/et_first_name"
+                    android:id="@+id/et_full_name"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:hint="Enter first name..."
                     android:textSize="14sp"
                     android:textColor="#FF2D2D2D"
                     android:textColorHint="#FF999999"
                     android:background="@drawable/digital_input_background"
                     android:paddingHorizontal="16dp"
                     android:layout_marginBottom="12dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:cursorVisible="false"
+                    android:longClickable="false"
+                    android:textIsSelectable="true"
                     android:inputType="textPersonName" />
 
-                <!-- Last Name -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Last Name"
-                    android:textSize="12sp"
-                    android:textColor="#FF666666"
-                    android:layout_marginBottom="4dp" />
-
-                <EditText
-                    android:id="@+id/et_last_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Enter last name..."
-                    android:textSize="14sp"
-                    android:textColor="#FF2D2D2D"
-                    android:textColorHint="#FF999999"
-                    android:background="@drawable/digital_input_background"
-                    android:paddingHorizontal="16dp"
-                    android:layout_marginBottom="12dp"
-                    android:inputType="textPersonName" />
 
                 <!-- Mobile No -->
                 <TextView
@@ -216,13 +199,17 @@
                     android:id="@+id/et_mobile_no"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:hint="Enter mobile number..."
                     android:textSize="14sp"
                     android:textColor="#FF2D2D2D"
                     android:textColorHint="#FF999999"
                     android:background="@drawable/digital_input_background"
                     android:paddingHorizontal="16dp"
                     android:layout_marginBottom="12dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:cursorVisible="false"
+                    android:longClickable="false"
+                    android:textIsSelectable="true"
                     android:inputType="phone" />
 
                 <!-- Email -->
@@ -238,12 +225,16 @@
                     android:id="@+id/et_email"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:hint="Enter your email address..."
                     android:textSize="14sp"
                     android:textColor="#FF2D2D2D"
                     android:textColorHint="#FF999999"
                     android:background="@drawable/digital_input_background"
                     android:paddingHorizontal="16dp"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:cursorVisible="false"
+                    android:longClickable="false"
+                    android:textIsSelectable="true"
                     android:inputType="textEmailAddress" />
 
             </LinearLayout>
