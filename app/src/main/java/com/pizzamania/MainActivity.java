@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnGetStarted = findViewById(R.id.btn_get_started);
         btnGetStarted.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, PizzaListActivity.class));
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
     }
 
