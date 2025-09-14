@@ -4,4 +4,5 @@
     <string name="open_drawer">Open navigation drawer</string>
     <string name="close_drawer">Close navigation drawer</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="directions_api_key">AIzaSyBL3XY377HWc2xuMvYbOK1zqheCpDdduOY</string>
 </resources>
