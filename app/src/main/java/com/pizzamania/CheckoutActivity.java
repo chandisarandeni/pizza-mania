@@ -601,6 +601,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
             String customerId = SessionManager.getInstance(this).getCustomerId();
             String customerName = SessionManager.getInstance(this).getName();
             String customerPhone = SessionManager.getInstance(this).getPhone();
+            String customerEmail = SessionManager.getInstance(this).getEmail();
 
             if (customerId == null || customerId.isEmpty()) {
                 Toast.makeText(this, "Customer ID missing. Please log in again.", Toast.LENGTH_SHORT).show();
@@ -617,6 +618,11 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
                 return;
             }
 
+            if(customerEmail == null || customerEmail.isEmpty()) {
+                Toast.makeText(this, "Customer email missing. Please log in again.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             //branch shop info
             String branchId = getShopBranchId(this.chosenShop);
 
@@ -626,6 +632,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
             //build order
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("customerId", customerId != null ? customerId : "");
+            orderMap.put("email", email != null ? email : "");
             orderMap.put("customerName", name);
             orderMap.put("customerPhone", phone);
             orderMap.put("branchId", branchId);
