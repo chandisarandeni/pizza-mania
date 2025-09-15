@@ -39,5 +39,12 @@ public class SettingsActivity extends AppCompatActivity {
             Intent intent = new Intent(this, PrivacyPolicyActivity.class);
             startActivity(intent);
         });
+
+        // navigate to Terms and Conditions
+        AppCompatButton termsBtn = findViewById(R.id.btn_terms);
+        termsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, TermsConditionsActivity.class);
+            startActivity(intent);
+        });
     }
 }
