@@ -53,6 +53,9 @@ public class OrderHistoryActivity extends AppCompatActivity {
         } else {
             showEmptyState();
         }
+
+        // Back button handling
+        findViewById(R.id.iv_back_arrow).setOnClickListener(v -> onBackPressed());
     }
 
     private void fetchOrders(String email) {
