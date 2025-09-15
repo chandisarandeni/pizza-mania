@@ -56,6 +56,13 @@ public class OrderHistoryActivity extends AppCompatActivity {
 
         // Back button handling
         findViewById(R.id.iv_back_arrow).setOnClickListener(v -> onBackPressed());
+
+        // navigate to profile view
+        findViewById(R.id.iv_profile).setOnClickListener(v -> {
+            // Navigate to ProfileActivity
+            startActivity(new android.content.Intent(OrderHistoryActivity.this, MyProfileActivity.class));
+            finish();
+        });
     }
 
     private void fetchOrders(String email) {
