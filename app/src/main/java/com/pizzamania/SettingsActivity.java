@@ -32,5 +32,12 @@ public class SettingsActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         });
+
+        // navigate to Privacy Policy
+        AppCompatButton privacyPolicyBtn = findViewById(R.id.btn_privacy_policy);
+        privacyPolicyBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PrivacyPolicyActivity.class);
+            startActivity(intent);
+        });
     }
 }
