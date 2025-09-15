@@ -53,5 +53,12 @@ public class SettingsActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TermsConditionsActivity.class);
             startActivity(intent);
         });
+
+        // navigate to Notification settings
+        AppCompatButton notificationBtn = findViewById(R.id.btn_notifications);
+        notificationBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, NotificationActivity.class);
+            startActivity(intent);
+        });
     }
 }
