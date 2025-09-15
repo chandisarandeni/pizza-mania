@@ -15,6 +15,7 @@ public class OrderApi {
 
     public interface ResponseCallback {
         void onSuccess(String responseBody);
+
         void onFailure(String error);
     }
 
@@ -89,4 +90,36 @@ public class OrderApi {
             }
         });
     }
+
+    public static void getOrdersByEmail(String email, ResponseCallback callback) {
+        String url = baseUrl + "/email?email=" + email;
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure("Network error: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+                try {
+                    String resp = response.body() != null ? response.body().string() : "";
+                    if (response.isSuccessful()) {
+                        callback.onSuccess(resp);
+                    } else {
+                        callback.onFailure("HTTP " + response.code() + ": " + resp);
+                    }
+                } catch (Exception ex) {
+                    callback.onFailure("Response parse error: " + ex.getMessage());
+                } finally {
+                    response.close();
+                }
+            }
+        });
+    }
+
 }

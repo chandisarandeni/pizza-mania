@@ -108,7 +108,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 
         double checkoutTotal = getIntent().getDoubleExtra("total_price", 0.0);
         TextView totalText = findViewById(R.id.tv_total_bill);
-        if(totalText != null) {
+        if (totalText != null) {
             totalText.setText(String.format("$%.2f", checkoutTotal));
         }
 
@@ -116,7 +116,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 
         String email = SessionManager.getInstance(this).getEmail();
 
-        if(email != null && !email.isEmpty()) {
+        if (email != null && !email.isEmpty()) {
             fetchCustomerAndPopulate(email);
         }
 
@@ -126,18 +126,13 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-
-
-
     private void setupMap() {
         // Create MapView programmatically
         mapView = new MapView(this);
 
         // Add MapView to the container
         FrameLayout mapContainer = findViewById(R.id.map_container);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                (int) (180 * getResources().getDisplayMetrics().density) // 180dp height
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, (int) (180 * getResources().getDisplayMetrics().density) // 180dp height
         );
         mapView.setLayoutParams(layoutParams);
         mapContainer.addView(mapView);
@@ -185,40 +180,35 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
     private void enableMyLocationAndCenter() {
         if (mMap == null) return;
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             try {
                 mMap.setMyLocationEnabled(true);
             } catch (SecurityException e) {
                 // ignore - we checked permission
             }
 
-            fusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null) {
-                                currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                                updateLocationMarker();
-                                moveCamera(currentLocation, DEFAULT_ZOOM);
-                                chooseNearestShopAndDrawRoute();
-                            } else {
-                                // fallback to default
-                                setDefaultLocation();
-                                chooseNearestShopAndDrawRoute();
-                            }
-                        }
-                    })
-                    .addOnFailureListener(e -> {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        updateLocationMarker();
+                        moveCamera(currentLocation, DEFAULT_ZOOM);
+                        chooseNearestShopAndDrawRoute();
+                    } else {
+                        // fallback to default
                         setDefaultLocation();
                         chooseNearestShopAndDrawRoute();
-                    });
+                    }
+                }
+            }).addOnFailureListener(e -> {
+                setDefaultLocation();
+                chooseNearestShopAndDrawRoute();
+            });
 
         } else {
             // Permission not granted -> request it
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             // meanwhile show default
             setDefaultLocation();
             chooseNearestShopAndDrawRoute();
@@ -282,10 +272,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
         String shopAddress = getShopAddress(shopLatLng);
 
         final String apiKey = getString(R.string.directions_api_key); // add your key in strings.xml
-        final String url = String.format(
-                "https://maps.googleapis.com/maps/api/directions/json?origin=%f,%f&destination=%f,%f&mode=driving&key=%s",
-                shopLatLng.latitude, shopLatLng.longitude, userLatLng.latitude, userLatLng.longitude, apiKey
-        );
+        final String url = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%f,%f&destination=%f,%f&mode=driving&key=%s", shopLatLng.latitude, shopLatLng.longitude, userLatLng.latitude, userLatLng.longitude, apiKey);
 
         new Thread(() -> {
             OkHttpClient client = new OkHttpClient();
@@ -309,24 +296,12 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
                     if (mMap == null) return;
 
                     // Add markers for shop and user
-                    mMap.addMarker(new MarkerOptions()
-                            .position(shopLatLng)
-                            .title("Shop Location")
-                            .snippet(shopAddress)
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    mMap.addMarker(new MarkerOptions().position(shopLatLng).title("Shop Location").snippet(shopAddress).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
-                    mMap.addMarker(new MarkerOptions()
-                            .position(userLatLng)
-                            .title("Delivery Location")
-                            .snippet("Your Location")
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    mMap.addMarker(new MarkerOptions().position(userLatLng).title("Delivery Location").snippet("Your Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
                     // draw polyline
-                    mMap.addPolyline(new PolylineOptions()
-                            .addAll(path)
-                            .width(10)
-                            .color(Color.BLUE)
-                            .geodesic(true));
+                    mMap.addPolyline(new PolylineOptions().addAll(path).width(10).color(Color.BLUE).geodesic(true));
 
                     // ensure both endpoints visible
                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -425,10 +400,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
         }
 
         // Add new marker
-        MarkerOptions markerOptions = new MarkerOptions()
-                .position(currentLocation)
-                .title("Delivery Location")
-                .snippet("Your pizza will be delivered here");
+        MarkerOptions markerOptions = new MarkerOptions().position(currentLocation).title("Delivery Location").snippet("Your pizza will be delivered here");
 
         currentMarker = mMap.addMarker(markerOptions);
     }
@@ -438,7 +410,6 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, zoom));
         }
     }
-
 
 
     @Override
@@ -510,8 +481,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
                     android.util.Log.d("CheckoutActivity", "Extracted - Name: " + name + ", Phone: " + phone + ", Email: " + fetchedEmail);
 
                     // Save to session
-                    SessionManager.getInstance(CheckoutActivity.this)
-                            .saveUser(fetchedEmail, name, phone, address, customerId);
+                    SessionManager.getInstance(CheckoutActivity.this).saveUser(fetchedEmail, name, phone, address, customerId);
 
                     // Update UI
                     runOnUiThread(() -> {
@@ -520,9 +490,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
                         EditText emailText = findViewById(R.id.et_email);
 
                         // Log UI elements found
-                        android.util.Log.d("CheckoutActivity", "UI Elements - Name field: " + (fullNameText != null) +
-                                          ", Phone field: " + (phoneText != null) +
-                                          ", Email field: " + (emailText != null));
+                        android.util.Log.d("CheckoutActivity", "UI Elements - Name field: " + (fullNameText != null) + ", Phone field: " + (phoneText != null) + ", Email field: " + (emailText != null));
 
                         if (fullNameText != null) {
                             fullNameText.setText(name);
@@ -554,10 +522,10 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
-    public void setUpContinueButton () {
+    public void setUpContinueButton() {
         Button continueButton = findViewById(R.id.btn_continue);
 
-        if(continueButton == null) return;
+        if (continueButton == null) return;
 
 
         continueButton.setOnClickListener(v -> {
@@ -582,10 +550,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
             String cardCvc = cardCvcEt != null ? cardCvcEt.getText().toString().trim() : "";
 
             // Simple hardcoded validation: must match constants
-            boolean paymentAuthorized = cardNumber.equals(VALID_CARD_NUMBER)
-                    && cardHolder.equalsIgnoreCase(VALID_CARD_HOLDER)
-                    && cardExpiry.equals(VALID_CARD_EXPIRY)
-                    && cardCvc.equals(VALID_CARD_CVC);
+            boolean paymentAuthorized = cardNumber.equals(VALID_CARD_NUMBER) && cardHolder.equalsIgnoreCase(VALID_CARD_HOLDER) && cardExpiry.equals(VALID_CARD_EXPIRY) && cardCvc.equals(VALID_CARD_CVC);
 
             if (!paymentAuthorized) {
                 Toast.makeText(CheckoutActivity.this, "Payment failed: invalid card details", Toast.LENGTH_LONG).show();
@@ -608,17 +573,17 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
                 return;
             }
 
-            if(customerName == null || customerName.isEmpty()) {
+            if (customerName == null || customerName.isEmpty()) {
                 Toast.makeText(this, "Customer name missing. Please log in again.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if(customerPhone == null || customerPhone.isEmpty()) {
+            if (customerPhone == null || customerPhone.isEmpty()) {
                 Toast.makeText(this, "Customer phone missing. Please log in again.", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if(customerEmail == null || customerEmail.isEmpty()) {
+            if (customerEmail == null || customerEmail.isEmpty()) {
                 Toast.makeText(this, "Customer email missing. Please log in again.", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -660,9 +625,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 // Add payment info
             Map<String, Object> paymentMap = new HashMap<>();
             paymentMap.put("method", "card");
-            paymentMap.put("card_last4", cardNumber.length() >= 4
-                    ? cardNumber.substring(cardNumber.length() - 4)
-                    : cardNumber);
+            paymentMap.put("card_last4", cardNumber.length() >= 4 ? cardNumber.substring(cardNumber.length() - 4) : cardNumber);
             paymentMap.put("authorized", true);
             orderMap.put("payment", paymentMap);
 
@@ -680,7 +643,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
                 public void onError(String error) {
                     runOnUiThread(() -> Toast.makeText(CheckoutActivity.this, "Order failed: " + error, Toast.LENGTH_LONG).show());
                     android.util.Log.e("CheckoutActivity", "Order failed: " + error);
-                    Log.d("CheckoutActivity", "data: " +orderMap);
+                    Log.d("CheckoutActivity", "data: " + orderMap);
                 }
             });
 

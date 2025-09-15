@@ -5,16 +5,16 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#FFF5F5F5"
+    android:orientation="vertical"
     tools:context=".OrderHistoryActivity">
 
     <!-- Header Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="#FFFFFF"
+        android:orientation="vertical"
         android:padding="16dp"
         android:paddingBottom="24dp">
 
@@ -32,8 +32,8 @@
                 android:layout_height="24dp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/caret_left"
-                android:contentDescription="Back button" />
+                android:contentDescription="Back button"
+                android:src="@drawable/caret_left" />
 
             <!-- Profile Image -->
             <ImageView
@@ -42,8 +42,8 @@
                 android:layout_height="32dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/profile_img"
-                android:contentDescription="Profile image" />
+                android:contentDescription="Profile image"
+                android:src="@drawable/profile_img" />
 
         </RelativeLayout>
 
@@ -52,21 +52,21 @@
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="Your Order History"
-            android:textSize="24sp"
-            android:textStyle="bold"
             android:textColor="#FF2D2D2D"
-            android:layout_marginBottom="8dp" />
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <!-- Subtitle -->
         <TextView
             android:id="@+id/tv_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:lineSpacingExtra="2dp"
             android:text="Here you can see rides that you have completed."
-            android:textSize="14sp"
             android:textColor="#FF666666"
-            android:lineSpacingExtra="2dp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 
@@ -76,9 +76,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:clipToPadding="false"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:clipToPadding="false" />
+        android:paddingBottom="16dp" />
 
     <!-- Empty State (Optional - Show when no orders) -->
     <LinearLayout
@@ -86,35 +86,35 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center"
+        android:orientation="vertical"
         android:padding="32dp"
         android:visibility="gone">
 
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/ic_empty_orders"
             android:layout_marginBottom="16dp"
-            android:contentDescription="No orders illustration" />
+            android:contentDescription="No orders illustration"
+            android:src="@drawable/ic_empty_orders" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:text="No Orders Yet"
-            android:textSize="18sp"
-            android:textStyle="bold"
             android:textColor="#FF2D2D2D"
-            android:layout_marginBottom="8dp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You haven't placed any orders yet.\nStart exploring our delicious pizzas!"
-            android:textSize="14sp"
-            android:textColor="#FF666666"
             android:gravity="center"
-            android:lineSpacingExtra="2dp" />
+            android:lineSpacingExtra="2dp"
+            android:text="You haven't placed any orders yet.\nStart exploring our delicious pizzas!"
+            android:textColor="#FF666666"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

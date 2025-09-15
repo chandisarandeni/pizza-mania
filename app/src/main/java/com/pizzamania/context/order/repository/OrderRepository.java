@@ -12,6 +12,7 @@ public class OrderRepository {
 
     public interface RepoCallback {
         void onSuccess(String response);
+
         void onError(String error);
     }
 
@@ -53,4 +54,19 @@ public class OrderRepository {
             }
         });
     }
+
+    public void getOrdersByEmail(@NonNull String email, @NonNull RepoCallback callback) {
+        OrderApi.getOrdersByEmail(email, new OrderApi.ResponseCallback() {
+            @Override
+            public void onSuccess(String responseBody) {
+                callback.onSuccess(responseBody);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                callback.onError(error);
+            }
+        });
+    }
+
 }

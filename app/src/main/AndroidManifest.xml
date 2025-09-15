@@ -24,6 +24,9 @@
             android:name=".MyProfileActivity"
             android:exported="false" />
         <activity
+            android:name=".OrderHistoryActivity"
+            android:exported="true" />
+        <activity
             android:name=".HelpAndSupportActivity"
             android:exported="false" />
         <activity

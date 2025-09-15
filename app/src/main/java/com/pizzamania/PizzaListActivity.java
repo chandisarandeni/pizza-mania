@@ -114,6 +114,12 @@ public class PizzaListActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
+
+        navigationView.getMenu().findItem(R.id.nav_order_history).setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(this, OrderHistoryActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
     }
 
     private void setupRecyclerView() {
