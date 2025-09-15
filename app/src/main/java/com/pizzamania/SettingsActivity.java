@@ -33,6 +33,13 @@ public class SettingsActivity extends AppCompatActivity {
             finish();
         });
 
+        // navigate to edit profile
+        AppCompatButton editProfileBtn = findViewById(R.id.btn_edit_profile);
+        editProfileBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MyProfileActivity.class);
+            startActivity(intent);
+        });
+
         // navigate to Privacy Policy
         AppCompatButton privacyPolicyBtn = findViewById(R.id.btn_privacy_policy);
         privacyPolicyBtn.setOnClickListener(v -> {
