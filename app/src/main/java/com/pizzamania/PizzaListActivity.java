@@ -121,6 +121,12 @@ public class PizzaListActivity extends AppCompatActivity {
             return true;
         });
 
+        navigationView.getMenu().findItem(R.id.nav_payment_methods).setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(this, PaymentCardActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+
         navigationView.getMenu().findItem(R.id.nav_notifications).setOnMenuItemClickListener(item -> {
             startActivity(new Intent(this, NotificationActivity.class));
             drawerLayout.closeDrawer(GravityCompat.START);
