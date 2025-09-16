@@ -10,11 +10,24 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.pizzamania.session.SessionManager;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // ✅ Check if user is already logged in
+        SessionManager session = SessionManager.getInstance(this);
+        if (session.getEmail() != null && !session.getEmail().isEmpty()) {
+            // User is logged in → go directly to profile/dashboard
+            startActivity(new Intent(MainActivity.this, PizzaListActivity.class));
+            finish(); // prevent going back to get started screen
+            return;
+        }
+
+        // Otherwise show Get Started screen
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -28,6 +41,4 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
     }
-
-
 }
