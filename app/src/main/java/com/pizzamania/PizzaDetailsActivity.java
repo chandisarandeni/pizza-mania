@@ -56,6 +56,12 @@ public class PizzaDetailsActivity extends AppCompatActivity {
 
         // Set up back button
         findViewById(R.id.iv_back_arrow).setOnClickListener(v -> finish());
+
+        // go to cart activity
+        findViewById(R.id.iv_cart_favorite).setOnClickListener(v -> {
+            // Open CartActivity
+            startActivity(new android.content.Intent(this, CartActivity.class));
+        });
     }
 
     private void setupPizzaDetails() {
@@ -206,11 +212,11 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         }
 
         CartItem cartItem = new CartItem(
-            pizzaName,
-            selectedSize,
-            quantity,
-            currentBasePrice,
-            pizzaImageUrl // Fixed variable name
+                pizzaName,
+                selectedSize,
+                quantity,
+                currentBasePrice,
+                pizzaImageUrl // Fixed variable name
         );
 
         long result = cartDbHelper.addCartItem(cartItem);

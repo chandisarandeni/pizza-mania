@@ -28,19 +28,21 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_margin="16dp"
-                android:src="@drawable/caret_left"
-                android:contentDescription="Back button" />
+                android:contentDescription="Back button"
+                android:src="@drawable/caret_left" />
 
             <!-- Favorite Heart Icon -->
-            <ImageView
-                android:id="@+id/iv_favorite"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_cart_favorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
                 android:layout_margin="16dp"
-                android:src="@drawable/heart_img"
-                android:contentDescription="Add to favorites" />
+                android:background="@drawable/shopping_bag_background"
+                android:contentDescription="Cart or Favorite"
+                android:padding="8dp"
+                android:src="@drawable/shoppingbag_img" />
 
             <!-- Pizza Image -->
             <ImageView
@@ -48,9 +50,9 @@
                 android:layout_width="280dp"
                 android:layout_height="280dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/pizza_placeholder"
+                android:contentDescription="Pizza Image"
                 android:scaleType="centerCrop"
-                android:contentDescription="Pizza Image" />
+                android:src="@drawable/pizza_placeholder" />
 
         </RelativeLayout>
 
