@@ -30,9 +30,6 @@
             android:name=".TermsConditionsActivity"
             android:exported="false" />
         <activity
-            android:name=".PrivatyPolicyActivity"
-            android:exported="false" />
-        <activity
             android:name=".SettingsActivity"
             android:exported="false" />
         <activity
