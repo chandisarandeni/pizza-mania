@@ -14,6 +14,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.pizzamania.utils.PasswordUtils;
+
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
@@ -52,12 +54,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             int originalPadding = (int) (24 * getResources().getDisplayMetrics().density);
-            v.setPadding(
-                    originalPadding + systemBars.left,
-                    originalPadding + systemBars.top,
-                    originalPadding + systemBars.right,
-                    originalPadding + systemBars.bottom
-            );
+            v.setPadding(originalPadding + systemBars.left, originalPadding + systemBars.top, originalPadding + systemBars.right, originalPadding + systemBars.bottom);
             return insets;
         });
 
@@ -85,10 +82,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
         String url = "http://10.0.2.2:8080/api/v1/customers/send-otp?email=" + email;
 
         new Thread(() -> {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(RequestBody.create(new byte[0]))
-                    .build();
+            Request request = new Request.Builder().url(url).post(RequestBody.create(new byte[0])).build();
 
             try (Response response = client.newCall(request).execute()) {
                 final String resp = response.body() != null ? response.body().string() : "No response";
@@ -102,18 +96,14 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this,
-                        "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this, "Failed to send OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
 
     // -------------------- Step 2: Verify OTP --------------------
     private void verifyOtp() {
-        String otp = etOtp1.getText().toString().trim() +
-                etOtp2.getText().toString().trim() +
-                etOtp3.getText().toString().trim() +
-                etOtp4.getText().toString().trim();
+        String otp = etOtp1.getText().toString().trim() + etOtp2.getText().toString().trim() + etOtp3.getText().toString().trim() + etOtp4.getText().toString().trim();
 
         if (otp.length() != 4) {
             Toast.makeText(this, "Enter complete 4-digit OTP", Toast.LENGTH_SHORT).show();
@@ -124,10 +114,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
         String url = "http://10.0.2.2:8080/api/v1/customers/verify-otp?email=" + email + "&otp=" + otp;
 
         new Thread(() -> {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .get()
-                    .build();
+            Request request = new Request.Builder().url(url).get().build();
 
             try (Response response = client.newCall(request).execute()) {
                 final String resp = response.body() != null ? response.body().string() : "No response";
@@ -145,8 +132,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this,
-                        "Failed to verify OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this, "Failed to verify OTP: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
@@ -166,14 +152,14 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
             return;
         }
 
+        // 🔹 Hash password before sending
+        String hashedPassword = PasswordUtils.hashPasswordSHA256(newPassword);
+
         String email = etEmail.getText().toString().trim();
-        String url = "http://10.0.2.2:8080/api/v1/customers/reset-password" +
-                "?email=" + email + "&newPassword=" + newPassword;
+        String url = "http://10.0.2.2:8080/api/v1/customers/reset-password" + "?email=" + email + "&newPassword=" + hashedPassword;
 
         new Thread(() -> {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(RequestBody.create(new byte[0])) // empty body
+            Request request = new Request.Builder().url(url).post(RequestBody.create(new byte[0])) // empty body
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -186,10 +172,10 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this,
-                        "Failed to reset password: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> Toast.makeText(ForgotPasswordOtpActivity.this, "Failed to reset password: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
+
 
 }
