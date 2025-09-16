@@ -20,6 +20,7 @@ import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.model.Customer;
 import com.pizzamania.context.customer.repository.CustomerRepository;
 import com.pizzamania.session.SessionManager;
+import com.pizzamania.utils.PasswordUtils; // 🔹 import hashing utility
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -113,14 +114,17 @@ public class LoginActivity extends AppCompatActivity {
                             Customer customer = customers[0];
                             String backendPassword = customer.getPassword() != null ? customer.getPassword().trim() : "";
 
-                            if (password.equals(backendPassword)) {
+                            // 🔹 Hash the entered password before comparing
+                            String hashedInputPassword = PasswordUtils.hashPasswordSHA256(password);
+
+                            if (hashedInputPassword.equals(backendPassword)) {
                                 // Save user session including customerId
                                 SessionManager.getInstance(LoginActivity.this).saveUser(
                                         customer.getEmail(),
                                         customer.getName() != null ? customer.getName() : "",
                                         customer.getPhone() != null ? customer.getPhone() : "",
                                         customer.getAddress() != null ? customer.getAddress() : "",
-                                        customer.getCustomerId() // <- Save customerId here
+                                        customer.getCustomerId()
                                 );
 
                                 runOnUiThread(() -> {
