@@ -2,32 +2,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/card_bg"
+    android:layout_marginBottom="12dp"
+    android:background="@color/white"
+    android:elevation="2dp"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="16dp">
 
+    <!-- Order ID -->
     <TextView
         android:id="@+id/tv_order_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ORD001"
+        android:textColor="#222222"
         android:textSize="16sp"
         android:textStyle="bold" />
 
+    <!-- Order Amount -->
     <TextView
         android:id="@+id/tv_order_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="LKR 1000"
-        android:textColor="@android:color/black"
+        android:textColor="#555555"
         android:textSize="14sp" />
 
+    <!-- Order Status -->
     <TextView
         android:id="@+id/tv_order_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:text="CREATED"
-        android:textColor="@android:color/holo_green_dark"
+        android:textColor="#FF9800"
         android:textSize="14sp" />
+
+    <!-- Order Items -->
+    <TextView
+        android:id="@+id/tv_order_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Items: Cheese Burst Pizza (Small) x1"
+        android:textColor="#555555"
+        android:textSize="14sp" />
+
+    <!-- View Button -->
+    <Button
+        android:id="@+id/btn_view_order"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:text="View"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 </LinearLayout>
