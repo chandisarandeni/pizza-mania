@@ -33,6 +33,13 @@ public class SettingsActivity extends AppCompatActivity {
             finish();
         });
 
+        // navigate to change password
+        AppCompatButton changePasswordBtn = findViewById(R.id.btn_change_password);
+        changePasswordBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ForgotPasswordOtpActivity.class);
+            startActivity(intent);
+        });
+
         // navigate to edit profile
         AppCompatButton editProfileBtn = findViewById(R.id.btn_edit_profile);
         editProfileBtn.setOnClickListener(v -> {
