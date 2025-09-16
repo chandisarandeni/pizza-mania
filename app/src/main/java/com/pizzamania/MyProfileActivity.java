@@ -1,16 +1,25 @@
 package com.pizzamania;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.network.CustomerApi;
@@ -18,10 +27,13 @@ import com.pizzamania.session.SessionManager;
 
 public class MyProfileActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CAMERA = 100;
+
     private TextView tvNameValue, tvEmailValue, tvPhoneValue, tvAddressValue;
     private Button btnEdit, btnSave;
     private EditText etName, etEmail, etPhone, etAddress;
     private LinearLayout llProfileContainer;
+    private ImageView ivProfileImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +48,9 @@ public class MyProfileActivity extends AppCompatActivity {
 
         btnEdit = findViewById(R.id.btn_edit_profile);
         btnSave = findViewById(R.id.btn_save_profile);
-
         llProfileContainer = findViewById(R.id.ll_profile_container);
+
+        ivProfileImage = findViewById(R.id.iv_profile_image);
 
         // Initialize EditTexts
         etName = new EditText(this);
@@ -50,8 +63,17 @@ public class MyProfileActivity extends AppCompatActivity {
         btnEdit.setOnClickListener(v -> enableEditMode());
         btnSave.setOnClickListener(v -> saveProfile());
 
-        // navigation back
         findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
+
+        // Camera click listener
+        ivProfileImage.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+            } else {
+                openCamera();
+            }
+        });
     }
 
     private void loadProfile() {
@@ -60,6 +82,9 @@ public class MyProfileActivity extends AppCompatActivity {
         tvEmailValue.setText(session.getEmail() != null ? session.getEmail() : "N/A");
         tvPhoneValue.setText(session.getPhone() != null ? session.getPhone() : "N/A");
         tvAddressValue.setText(session.getAddress() != null ? session.getAddress() : "N/A");
+
+        // Load profile image if previously saved (optional)
+        // TODO: Load from SQLite or file storage
     }
 
     private void enableEditMode() {
@@ -105,7 +130,6 @@ public class MyProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Prepare JSON for backend (email is not changed)
         String jsonBody = "{"
                 + "\"name\":\"" + name + "\","
                 + "\"email\":\"" + email + "\","
@@ -113,17 +137,14 @@ public class MyProfileActivity extends AppCompatActivity {
                 + "\"address\":\"" + address + "\""
                 + "}";
 
-        // Use email-based update
         CustomerApi.updateCustomerByEmail(email, jsonBody, new NetworkClient.NetworkCallback() {
             @Override
             public void onSuccess(String response) {
                 runOnUiThread(() -> {
-                    // Update session
                     SessionManager.getInstance(MyProfileActivity.this)
                             .saveUser(email, name, phone, address,
                                     SessionManager.getInstance(MyProfileActivity.this).getCustomerId());
 
-                    // Update UI
                     tvNameValue.setText(name);
                     tvEmailValue.setText(email);
                     tvPhoneValue.setText(phone);
@@ -156,5 +177,34 @@ public class MyProfileActivity extends AppCompatActivity {
     private void removeEditText(EditText et) {
         LinearLayout parent = (LinearLayout) et.getParent();
         if (parent != null) parent.removeView(et);
+    }
+
+    // -------------------- Camera Methods --------------------
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openCamera();
+        } else {
+            Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            ivProfileImage.setImageBitmap(photo);
+
+            // TODO: Save this photo to SQLite as BLOB or save file path
+        }
     }
 }
