@@ -17,30 +17,32 @@ import com.pizzamania.PizzaDetailsActivity;
 import com.pizzamania.R;
 import com.pizzamania.context.product.model.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> {
+
+    private final Context context;
+    private final OnItemClickListener listener;
+    private List<Product> allItems;      // original full list
+    private List<Product> filteredItems; // filtered list
 
     public interface OnItemClickListener {
         void onItemClick(Product product);
     }
 
-    private List<Product> items;
-    private final Context context;
-    private final OnItemClickListener listener;
-
+    // Constructor with listener
     public PizzaAdapter(Context context, List<Product> items, OnItemClickListener listener) {
         this.context = context;
-        this.items = items;
         this.listener = listener;
+        this.allItems = new ArrayList<>(items);
+        this.filteredItems = new ArrayList<>(items);
     }
 
-    // Alternative constructor for simpler usage
+    // Constructor without listener (default click opens details)
     public PizzaAdapter(List<Product> items, Context context) {
-        this.items = items;
         this.context = context;
         this.listener = product -> {
-            // Default click behavior - open pizza details
             Intent intent = new Intent(context, PizzaDetailsActivity.class);
             intent.putExtra("pizza_name", product.getName());
             intent.putExtra("pizza_price", product.getPrice());
@@ -49,6 +51,8 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
             intent.putExtra("product_id", product.getProductId());
             context.startActivity(intent);
         };
+        this.allItems = new ArrayList<>(items);
+        this.filteredItems = new ArrayList<>(items);
     }
 
     @NonNull
@@ -60,47 +64,51 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (items == null || position >= items.size()) {
-            return;
-        }
+        if (position >= filteredItems.size()) return;
 
-        Product product = items.get(position);
+        Product product = filteredItems.get(position);
+        holder.name.setText(product.getName() != null ? product.getName() : "Unknown Pizza");
+        holder.price.setText(String.format("$%.2f", product.getPrice()));
 
-        // Safely set text only if views exist and product is not null
-        if (product != null && holder.name != null) {
-            holder.name.setText(product.getName() != null ? product.getName() : "Unknown Pizza");
-        }
+        Glide.with(context)
+                .load(product.getImageUrl() != null ? product.getImageUrl() : "")
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.pizza_placeholder)
+                        .error(R.drawable.pizza_placeholder))
+                .into(holder.image);
 
-        if (product != null && holder.price != null) {
-            holder.price.setText(String.format("$%.2f", product.getPrice()));
-        }
-
-        // Load image with Glide
-        if (product != null && holder.image != null) {
-            String imageUrl = product.getImageUrl();
-            Glide.with(context)
-                    .load(imageUrl != null ? imageUrl : "")
-                    .apply(new RequestOptions()
-                            .placeholder(R.drawable.pizza_placeholder)
-                            .error(R.drawable.pizza_placeholder))
-                    .into(holder.image);
-        }
-
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null && product != null) {
-                listener.onItemClick(product);
-            }
-        });
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(product));
     }
 
     @Override
     public int getItemCount() {
-        return items == null ? 0 : items.size();
+        return filteredItems.size();
     }
 
-    // Add updateItems method for refreshing data
+    // Update full list and reset filter
     public void updateItems(List<Product> newItems) {
-        this.items = newItems;
+        this.allItems.clear();
+        this.allItems.addAll(newItems);
+
+        this.filteredItems.clear();
+        this.filteredItems.addAll(newItems);
+
+        notifyDataSetChanged();
+    }
+
+    // ------------------- Real-time filter -------------------
+    public void filter(String query) {
+        filteredItems.clear();
+        if (query.isEmpty()) {
+            filteredItems.addAll(allItems);
+        } else {
+            String lowerQuery = query.toLowerCase();
+            for (Product p : allItems) {
+                if (p.getName() != null && p.getName().toLowerCase().contains(lowerQuery)) {
+                    filteredItems.add(p);
+                }
+            }
+        }
         notifyDataSetChanged();
     }
 
