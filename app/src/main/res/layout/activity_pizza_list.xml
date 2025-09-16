@@ -12,30 +12,30 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="#F8F8F8"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
         <!-- Top Bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="16dp"
+            android:background="#FFFFFF"
             android:gravity="center_vertical"
-            android:background="#FFFFFF">
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <!-- Menu Icon -->
             <ImageView
                 android:id="@+id/iv_menu"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/menu_img"
-                android:contentDescription="Menu"
                 android:layout_marginEnd="16dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Menu"
                 android:padding="6dp"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/menu_img" />
 
             <!-- Filter Chips -->
             <HorizontalScrollView
@@ -50,43 +50,13 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/chip_top_rated"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:text="Top rated"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:background="@drawable/chip_selected"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:gravity="center"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/chip_hot_sale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:text="Hot Sale"
-                        android:textColor="#666666"
-                        android:textSize="12sp"
-                        android:background="@drawable/chip_unselected"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:gravity="center"
-                        android:layout_marginEnd="8dp" />
-
-                    <TextView
-                        android:id="@+id/chip_popular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:text="Popular"
-                        android:textColor="#666666"
-                        android:textSize="12sp"
-                        android:background="@drawable/chip_unselected"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:gravity="center"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="8dp"
+                        android:text="Pizza Mania"
+                        android:textColor="#333333"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
             </HorizontalScrollView>
@@ -96,12 +66,12 @@
                 android:id="@+id/iv_cart"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/shoppingbag_img"
-                android:contentDescription="Shopping Cart"
                 android:layout_marginStart="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Shopping Cart"
                 android:padding="6dp"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/shoppingbag_img" />
 
         </LinearLayout>
 
@@ -109,9 +79,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#FFFFFF"
             android:orientation="horizontal"
-            android:padding="16dp"
-            android:background="#FFFFFF">
+            android:padding="16dp">
 
             <EditText
                 android:id="@+id/et_search"
@@ -134,8 +104,8 @@
             android:id="@+id/rv_pizzas"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
             android:clipToPadding="false"
+            android:padding="8dp"
             tools:listitem="@layout/item_pizza" />
 
     </LinearLayout>
@@ -148,8 +118,8 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu"
         app:itemIconTint="@color/text_gray"
-        app:itemTextColor="@color/primary_text" />
+        app:itemTextColor="@color/primary_text"
+        app:menu="@menu/drawer_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
