@@ -16,12 +16,19 @@ import androidx.appcompat.widget.AppCompatEditText;
 import com.google.gson.Gson;
 import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.repository.CustomerRepository;
+import com.pizzamania.session.SessionManager;
 
 import java.util.HashMap;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class SignupActivity extends AppCompatActivity {
 
-    private AppCompatEditText etEmail, etPassword, etConfirmPassword;
+    private AppCompatEditText etEmail, etPassword, etConfirmPassword, etName;
     private AppCompatButton btnCreateAccount;
     private CustomerRepository repository;
     private Gson gson;
@@ -30,7 +37,6 @@ public class SignupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Edge-to-edge layout
         setContentView(R.layout.activity_signup);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -39,6 +45,7 @@ public class SignupActivity extends AppCompatActivity {
         });
 
         // Initialize views
+        etName = findViewById(R.id.et_name);
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
@@ -47,7 +54,7 @@ public class SignupActivity extends AppCompatActivity {
         repository = new CustomerRepository();
         gson = new Gson();
 
-        // TextWatcher to allow lowercase letters, numbers, @ and .
+        // Email TextWatcher to filter characters
         etEmail.addTextChangedListener(new TextWatcher() {
             boolean isUpdating = false;
 
@@ -62,9 +69,7 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (isUpdating) return;
-
                 isUpdating = true;
-                // Keep lowercase letters, numbers, @ and .
                 String filtered = s.toString().toLowerCase().replaceAll("[^a-z0-9@.]", "");
                 if (!s.toString().equals(filtered)) {
                     etEmail.setText(filtered);
@@ -74,7 +79,6 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-
         // Back button
         findViewById(R.id.btn_back).setOnClickListener(v -> onBackPressed());
 
@@ -83,14 +87,14 @@ public class SignupActivity extends AppCompatActivity {
                 startActivity(new Intent(SignupActivity.this, LoginActivity.class))
         );
 
-        // Create Account click
+        // Create Account
         btnCreateAccount.setOnClickListener(v -> {
+            String name = etName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
             String confirm = etConfirmPassword.getText().toString().trim();
 
-            // Basic validation
-            if (email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
                 Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -100,24 +104,31 @@ public class SignupActivity extends AppCompatActivity {
                 return;
             }
 
-            // Build JSON using Gson
+            // Build JSON
             HashMap<String, String> data = new HashMap<>();
+            data.put("name", name);
             data.put("email", email);
             data.put("password", password);
             String jsonBody = gson.toJson(data);
 
-            // Call repository to add customer
             repository.addCustomer(jsonBody, new NetworkClient.NetworkCallback() {
                 @Override
                 public void onSuccess(String response) {
                     runOnUiThread(() -> {
                         if (response.contains("Error: Email already exists")) {
-                            Toast.makeText(SignupActivity.this, "Email already exists! Please use a different one.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(SignupActivity.this, "Email already exists!", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(SignupActivity.this, "Signup successful!", Toast.LENGTH_SHORT).show();
-                            // Optionally, you could pass OTP or customerId to next screen if needed
-                            startActivity(new Intent(SignupActivity.this, LoginActivity.class));
-                            finish();
+
+                            // Save session temporarily
+                            SessionManager session = SessionManager.getInstance(SignupActivity.this);
+                            session.saveUser(email, name, "", "", "");
+
+                            // **Instant logout**
+                            session.clear();
+
+                            // Send welcome email (optional)
+                            sendWelcomeEmail(email, name, true);
                         }
                     });
                 }
@@ -130,6 +141,58 @@ public class SignupActivity extends AppCompatActivity {
                 }
             });
         });
+    }
 
+    /**
+     * Send welcome email.
+     *
+     * @param email           Email address
+     * @param name            Name
+     * @param navigateToLogin If true, go to login after sending email
+     */
+    private void sendWelcomeEmail(String email, String name, boolean navigateToLogin) {
+        if (email == null || email.isEmpty()) {
+            if (navigateToLogin) goToLogin();
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                HashMap<String, String> bodyMap = new HashMap<>();
+                bodyMap.put("email", email);
+                bodyMap.put("name", name != null && !name.isEmpty() ? name : "Customer");
+
+                String jsonBody = gson.toJson(bodyMap);
+
+                RequestBody requestBody = RequestBody.create(
+                        jsonBody,
+                        MediaType.parse("application/json; charset=utf-8")
+                );
+
+                Request request = new Request.Builder()
+                        .url("http://10.0.2.2:3000/api/v1/notifications/send-welcome")
+                        .post(requestBody)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SignupActivity.this, "Welcome email sent!", Toast.LENGTH_SHORT).show();
+                        if (navigateToLogin) goToLogin();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    Toast.makeText(SignupActivity.this, "Failed to send welcome email: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (navigateToLogin) goToLogin();
+                });
+            }
+        }).start();
+    }
+
+    private void goToLogin() {
+        startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+        finish();
     }
 }
