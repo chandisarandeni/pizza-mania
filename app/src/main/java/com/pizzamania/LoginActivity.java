@@ -20,7 +20,7 @@ import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.model.Customer;
 import com.pizzamania.context.customer.repository.CustomerRepository;
 import com.pizzamania.session.SessionManager;
-import com.pizzamania.utils.PasswordUtils; // 🔹 import hashing utility
+import com.pizzamania.utils.PasswordUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -31,8 +31,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Enable edge-to-edge layout
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_login);
+
+        // ✅ Use AppCompatActivity's setContentView explicitly to avoid ambiguity
+        super.setContentView(R.layout.activity_login);
 
         // Auto-login if already logged in
         if (SessionManager.getInstance(this).isLoggedIn()) {
@@ -41,13 +45,14 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // Adjust for system bars
+        // Adjust padding for system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Initialize UI components
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         btnLogin = findViewById(R.id.btn_login);
@@ -59,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         setupNavigationButtons();
     }
 
+    // Email filter: only allow lowercase letters, numbers, @, and .
     private void setupEmailFilter() {
         etEmail.addTextChangedListener(new TextWatcher() {
             boolean isUpdating = false;
@@ -85,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Login button setup
     private void setupLoginButton() {
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
@@ -114,11 +121,11 @@ public class LoginActivity extends AppCompatActivity {
                             Customer customer = customers[0];
                             String backendPassword = customer.getPassword() != null ? customer.getPassword().trim() : "";
 
-                            // 🔹 Hash the entered password before comparing
+                            // 🔹 Hash entered password before comparing with DB
                             String hashedInputPassword = PasswordUtils.hashPasswordSHA256(password);
 
                             if (hashedInputPassword.equals(backendPassword)) {
-                                // Save user session including customerId
+                                // Save user session with customerId
                                 SessionManager.getInstance(LoginActivity.this).saveUser(
                                         customer.getEmail(),
                                         customer.getName() != null ? customer.getName() : "",
@@ -146,7 +153,9 @@ public class LoginActivity extends AppCompatActivity {
                         });
 
                     } catch (Exception e) {
-                        runOnUiThread(() -> Toast.makeText(LoginActivity.this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() ->
+                                Toast.makeText(LoginActivity.this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        );
                         e.printStackTrace();
                     }
                 }
@@ -163,8 +172,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Navigation buttons (Signup & Forgot Password)
     private void setupNavigationButtons() {
-        findViewById(R.id.btn_signup).setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, SignupActivity.class)));
-        findViewById(R.id.tv_forgot).setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, ForgotPasswordOtpActivity.class)));
+        findViewById(R.id.btn_signup).setOnClickListener(v ->
+                startActivity(new Intent(LoginActivity.this, SignupActivity.class))
+        );
+        findViewById(R.id.tv_forgot).setOnClickListener(v ->
+                startActivity(new Intent(LoginActivity.this, ForgotPasswordOtpActivity.class))
+        );
     }
 }
