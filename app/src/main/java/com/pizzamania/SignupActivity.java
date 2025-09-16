@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.repository.CustomerRepository;
 import com.pizzamania.session.SessionManager;
+import com.pizzamania.utils.PasswordUtils; // 🔹 import utility
 
 import java.util.HashMap;
 
@@ -104,11 +105,15 @@ public class SignupActivity extends AppCompatActivity {
                 return;
             }
 
+            // 🔹 Hash the password before sending
+            String hashedPassword = PasswordUtils.hashPasswordSHA256(password);
+
             // Build JSON
             HashMap<String, String> data = new HashMap<>();
             data.put("name", name);
             data.put("email", email);
-            data.put("password", password);
+            data.put("password", hashedPassword);
+
             String jsonBody = gson.toJson(data);
 
             repository.addCustomer(jsonBody, new NetworkClient.NetworkCallback() {
@@ -145,10 +150,6 @@ public class SignupActivity extends AppCompatActivity {
 
     /**
      * Send welcome email.
-     *
-     * @param email           Email address
-     * @param name            Name
-     * @param navigateToLogin If true, go to login after sending email
      */
     private void sendWelcomeEmail(String email, String name, boolean navigateToLogin) {
         if (email == null || email.isEmpty()) {
