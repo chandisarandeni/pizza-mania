@@ -32,7 +32,7 @@ public class PizzaDetailsActivity extends AppCompatActivity {
     private double basePriceMedium = 9.99;
     private double basePriceLarge = 12.99;
     private double currentBasePrice = basePriceSmall; // Default to small
-    private String selectedSize = "Small";
+    private String selectedSize = "S"; // Changed default selected size to "S"
 
     private CartDbHelper cartDbHelper;
     private String pizzaName;
@@ -166,7 +166,7 @@ public class PizzaDetailsActivity extends AppCompatActivity {
     }
 
     private void selectSize(String size, double price) {
-        selectedSize = size.equals("S") ? "Small" : size.equals("M") ? "Medium" : "Large";
+        selectedSize = size; // Store the size code (S, M, L) instead of full name
         currentBasePrice = price;
         updateTotalPrice();
     }
@@ -196,7 +196,6 @@ public class PizzaDetailsActivity extends AppCompatActivity {
                 btnSizeLarge.setTextColor(getResources().getColor(android.R.color.white));
                 break;
         }
-
     }
 
     private void setupAddToCartButton() {
@@ -228,4 +227,3 @@ public class PizzaDetailsActivity extends AppCompatActivity {
         }
     }
 }
-
