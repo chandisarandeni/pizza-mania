@@ -19,6 +19,7 @@
 
 * **Language:** Java
 * **Framework:** Android (AppCompat, Material Components)
+* **Backend:** Springboot, NodeJs (Express)
 * **UI:** XML Layouts, RecyclerView, ConstraintLayout
 * **Storage:** SQLite (user + cart)
 * **Session:** SharedPreferences / EncryptedSharedPreferences
