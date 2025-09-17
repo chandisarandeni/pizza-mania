@@ -18,11 +18,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Check if we need to clear pizza list and go to PizzaListActivity
+        boolean clearPizzaList = getIntent().getBooleanExtra("clear_pizza_list", false);
+
         // ✅ Check if user is already logged in
         SessionManager session = SessionManager.getInstance(this);
         if (session.getEmail() != null && !session.getEmail().isEmpty()) {
             // User is logged in → go directly to profile/dashboard
-            startActivity(new Intent(MainActivity.this, PizzaListActivity.class));
+            Intent intent = new Intent(MainActivity.this, PizzaListActivity.class);
+            if (clearPizzaList) {
+                intent.putExtra("clear_pizza_list", true);
+            }
+            startActivity(intent);
             finish(); // prevent going back to get started screen
             return;
         }

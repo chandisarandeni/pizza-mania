@@ -59,7 +59,17 @@ public class PizzaListActivity extends AppCompatActivity {
 
         handleSessionUser();
 
-        fetchProducts();
+        // Check if we need to clear pizza list (coming from home button on success screen)
+        boolean clearPizzaList = getIntent().getBooleanExtra("clear_pizza_list", false);
+        if (clearPizzaList) {
+            // Clear the adapter and show empty state
+            if (adapter != null) {
+                adapter.updateItems(new ArrayList<>());
+            }
+            Toast.makeText(this, "Welcome back! Starting fresh.", Toast.LENGTH_SHORT).show();
+        } else {
+            fetchProducts();
+        }
 
         setupRecyclerView();
         setupSearch();

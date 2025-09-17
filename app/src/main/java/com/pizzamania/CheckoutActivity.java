@@ -35,6 +35,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.pizzamania.context.common.network.NetworkClient;
 import com.pizzamania.context.customer.repository.CustomerRepository;
 import com.pizzamania.context.order.repository.OrderRepository;
+import com.pizzamania.db.CartDbHelper;
 import com.pizzamania.session.SessionManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -112,7 +113,8 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
             totalText.setText(String.format("$%.2f", checkoutTotal));
         }
 
-        parseCartFromIntent();
+        // Load cart items from database instead of intent
+        loadCartItemsFromDatabase();
 
         String email = SessionManager.getInstance(this).getEmail();
 
@@ -527,9 +529,8 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
 
         if (continueButton == null) return;
 
-
         continueButton.setOnClickListener(v -> {
-            // Read UI fields (these are prefilled from session when available)
+            // Read UI fields for validation
             EditText fullNameText = findViewById(R.id.et_full_name);
             EditText phoneText = findViewById(R.id.et_mobile_no);
             EditText emailText = findViewById(R.id.et_email);
@@ -549,7 +550,7 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
             String cardExpiry = cardExpiryEt != null ? cardExpiryEt.getText().toString().trim() : "";
             String cardCvc = cardCvcEt != null ? cardCvcEt.getText().toString().trim() : "";
 
-            // Simple hardcoded validation: must match constants
+            // Simple validation: must match constants
             boolean paymentAuthorized = cardNumber.equals(VALID_CARD_NUMBER) && cardHolder.equalsIgnoreCase(VALID_CARD_HOLDER) && cardExpiry.equals(VALID_CARD_EXPIRY) && cardCvc.equals(VALID_CARD_CVC);
 
             if (!paymentAuthorized) {
@@ -562,121 +563,64 @@ public class CheckoutActivity extends AppCompatActivity implements OnMapReadyCal
                 return;
             }
 
-            //collect customer info
-            String customerId = SessionManager.getInstance(this).getCustomerId();
-            String customerName = SessionManager.getInstance(this).getName();
-            String customerPhone = SessionManager.getInstance(this).getPhone();
-            String customerEmail = SessionManager.getInstance(this).getEmail();
-
-            if (customerId == null || customerId.isEmpty()) {
-                Toast.makeText(this, "Customer ID missing. Please log in again.", Toast.LENGTH_SHORT).show();
+            // Basic customer info validation
+            if (name.isEmpty() || phone.isEmpty() || email.isEmpty()) {
+                Toast.makeText(this, "Please fill in all customer details", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if (customerName == null || customerName.isEmpty()) {
-                Toast.makeText(this, "Customer name missing. Please log in again.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (customerPhone == null || customerPhone.isEmpty()) {
-                Toast.makeText(this, "Customer phone missing. Please log in again.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (customerEmail == null || customerEmail.isEmpty()) {
-                Toast.makeText(this, "Customer email missing. Please log in again.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            //branch shop info
-            String branchId = getShopBranchId(this.chosenShop);
-
-            //total amount
-            double totalAmount = getIntent().getDoubleExtra("total_price", 0.0);
-
-            //build order
-            Map<String, Object> orderMap = new HashMap<>();
-            orderMap.put("customerId", customerId != null ? customerId : "");
-            orderMap.put("email", email != null ? email : "");
-            orderMap.put("customerName", name);
-            orderMap.put("customerPhone", phone);
-            orderMap.put("branchId", branchId);
-            orderMap.put("orderAmount", totalAmount);
-            orderMap.put("orderStatus", "CREATED");
-
-// Format orderDate like: 2025-09-14T16:00:00Z
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            orderMap.put("orderDate", sdf.format(new Date()));
-
-// Build items array
-            List<Map<String, Object>> itemsList = new ArrayList<>();
-            for (Map<String, Object> item : cartItems) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("productId", item.get("id"));          // must be "PIZZA001", not just 1
-                map.put("productName", item.get("name"));      // ensure cartItems has "name"
-                map.put("productSize", item.get("size"));      // ensure cartItems has "size"
-                map.put("quantity", item.get("quantity"));
-                map.put("price", item.get("price"));
-                itemsList.add(map);
-            }
-            orderMap.put("items", itemsList);
-
-// Add payment info
-            Map<String, Object> paymentMap = new HashMap<>();
-            paymentMap.put("method", "card");
-            paymentMap.put("card_last4", cardNumber.length() >= 4 ? cardNumber.substring(cardNumber.length() - 4) : cardNumber);
-            paymentMap.put("authorized", true);
-            orderMap.put("payment", paymentMap);
-
-            //send to the repository
-            orderRepository.createOrderFromMap(orderMap, new OrderRepository.RepoCallback() {
-                @Override
-                public void onSuccess(String response) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(CheckoutActivity.this, "Order placed successfully!", Toast.LENGTH_LONG).show();
-                        finish(); // close checkout activity
-                    });
-                }
-
-                @Override
-                public void onError(String error) {
-                    runOnUiThread(() -> Toast.makeText(CheckoutActivity.this, "Order failed: " + error, Toast.LENGTH_LONG).show());
-                    android.util.Log.e("CheckoutActivity", "Order failed: " + error);
-                    Log.d("CheckoutActivity", "data: " + orderMap);
-                }
-            });
-
+            // Payment validated - now go to cart to review and place order
+            Intent intent = new Intent(CheckoutActivity.this, CartActivity.class);
+            intent.putExtra("from_checkout", true); // Signal that we're coming from checkout
+            startActivity(intent);
         });
-
     }
 
-    private void parseCartFromIntent() {
-        String cartJson = getIntent().getStringExtra("cart_items_json");
-        if (cartJson == null || cartJson.isEmpty()) return;
-
+    private void loadCartItemsFromDatabase() {
+        CartDbHelper cartDbHelper = new CartDbHelper(this);
         try {
-            org.json.JSONArray arr = new org.json.JSONArray(cartJson);
-            cartItems.clear(); // just in case
+            List<com.pizzamania.model.CartItem> dbCartItems = cartDbHelper.getAllCartItems();
+            cartItems.clear();
 
-            for (int i = 0; i < arr.length(); i++) {
-                org.json.JSONObject obj = arr.getJSONObject(i);
+            for (com.pizzamania.model.CartItem item : dbCartItems) {
                 Map<String, Object> map = new HashMap<>();
-
-                map.put("id", obj.getString("id"));
-                map.put("price", obj.getDouble("price"));
-                map.put("quantity", obj.getInt("quantity"));
-                map.put("name", obj.getString("name"));       // add this
-                map.put("size", obj.optString("size", "Medium")); // optional default
-
+                map.put("id", String.valueOf(item.getId()));
+                map.put("name", item.getName());
+                map.put("size", item.getSize());
+                map.put("quantity", item.getQuantity());
+                map.put("price", item.getPrice());
                 cartItems.add(map);
             }
 
+            Log.d("CheckoutActivity", "Loaded " + cartItems.size() + " items from database");
         } catch (Exception e) {
-            e.printStackTrace();
-            cartItems.clear(); // fallback to empty list
+            Log.e("CheckoutActivity", "Error loading cart items from database: " + e.getMessage());
+            cartItems.clear();
+        } finally {
+            cartDbHelper.close();
         }
     }
 
-
+    private void parseCartFromIntent() {
+        String cartJson = getIntent().getStringExtra("cart");
+        if (cartJson != null && !cartJson.isEmpty()) {
+            try {
+                JSONArray jsonArray = new JSONArray(cartJson);
+                cartItems.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", jsonObject.getString("id"));
+                    map.put("name", jsonObject.getString("name"));
+                    map.put("size", jsonObject.getString("size"));
+                    map.put("quantity", jsonObject.getInt("quantity"));
+                    map.put("price", jsonObject.getDouble("price"));
+                    cartItems.add(map);
+                }
+                Log.d("CheckoutActivity", "Parsed " + cartItems.size() + " items from intent");
+            } catch (Exception e) {
+                Log.e("CheckoutActivity", "Error parsing cart JSON: " + e.getMessage());
+            }
+        }
+    }
 }
